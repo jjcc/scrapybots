@@ -14,6 +14,12 @@ BOT_NAME = 'generalbot'
 SPIDER_MODULES = ['generalbot.spiders']
 NEWSPIDER_MODULE = 'generalbot.spiders'
 
+FEED_FORMAT = "csv"
+
+ITEM_PIPELINES = {
+   'scrapy.pipelines.images.ImagesPipeline': 1
+}
+IMAGES_STORE = 'tmp/images/'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'generalbot (+http://www.yourdomain.com)'
