@@ -1,4 +1,6 @@
 import scrapy
+from misc.log import *
+import re
 
 class RedditSpider(scrapy.Spider):
 	#spider name
@@ -19,6 +21,15 @@ class RedditSpider(scrapy.Spider):
 		times = response.css('time::attr(title)').extract()
 		comments = response.css('.comments::text').extract()
 		#Give the extracted content row wise.
+		subscribers = response.css('.subscribers>span:nth-child(1)::text').extract()
+		users = response.css('.number::text').extract() # 0: subscriber, 1: user online
+		including_subs = response.css('.md a::attr(href)').getall()
+        #including_subs2 = response          .xpath("//div[@class='md']/a")
+		info('subscribers: '+ subscribers[0])
+
+		#subs = including_subs.getall()
+		subs = [x for x in including_subs if re.search(r'^\/r\/', x)]
+
 		for item in zip(titles,votes,times,comments):
 			#create a dictionary of title, vote, publish date and comments
 			scraped_info = {
