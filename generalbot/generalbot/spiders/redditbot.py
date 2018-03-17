@@ -1,6 +1,7 @@
 import scrapy
 from misc.log import *
 import re
+from generalbot.items import *
 
 class RedditSpider(scrapy.Spider):
 	#spider name
@@ -38,5 +39,12 @@ class RedditSpider(scrapy.Spider):
 				'created_at' : item[2],
 				'comments' : item[3],
 			}
+			itm =  GeneralbotItem()
+			itm['title'] = item[0]
+			itm['vote'] = item[1]
+			itm['created_at'] = item[2]
+			itm['comments'] = item[3]
+
 			#yield or give the scraped info to scrapy
-			yield scraped_info
+			#yield scraped_info
+			yield itm

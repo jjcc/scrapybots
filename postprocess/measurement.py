@@ -5,9 +5,15 @@ import dateutil
 Post processing classes
 '''
 
-class RedditMeasure():
-
-
+class RedditMeasure(object):
+    '''
+    name,
+    #of subscriber,
+    #frequncy of post
+    #average comments
+    #related sub reddit
+    #
+    '''
 
     def process(self,collection):
 

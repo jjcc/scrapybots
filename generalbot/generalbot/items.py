@@ -11,4 +11,8 @@ import scrapy
 class GeneralbotItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    title = scrapy.Field()
+    vote = scrapy.Field()
+    created_at = scrapy.Field()
+    comments = scrapy.Field()
     pass
