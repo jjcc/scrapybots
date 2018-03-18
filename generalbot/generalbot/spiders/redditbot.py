@@ -12,7 +12,10 @@ class RedditSpider(scrapy.Spider):
 	start_urls = ['https://www.reddit.com/r/programming/']
 	#location of csv file
 	custom_settings = {
-		'FEED_URI' : 'tmp/reddit.csv'
+		'FEED_URI' : 'tmp/reddit.csv',
+		'ITEM_PIPELINES': {
+			'generalbot.pipelines.GeneralbotPipeline': 300,
+		}
 	}
 
 	def parse(self, response):
