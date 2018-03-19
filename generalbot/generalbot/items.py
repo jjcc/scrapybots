@@ -16,3 +16,10 @@ class GeneralbotItem(scrapy.Item):
     created_at = scrapy.Field()
     comments = scrapy.Field()
     pass
+
+
+class RedditItem(scrapy.Item):
+    subreddit = scrapy.Field()
+    subscribers = scrapy.Field()
+    users = scrapy.Field()
+    pass
