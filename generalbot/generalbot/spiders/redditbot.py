@@ -53,11 +53,14 @@ class RedditSpider(scrapy.Spider):
 
 			#yield or give the scraped info to scrapy
 			#yield scraped_info
-			#yield itm
-			posts.append(itm)
+			yield itm
+			#posts.append(itm)
 
 		subredditInfo = RedditItem()
-		subredditInfo['subscribers'] = subscribers
-		subredditInfo['users'] = onlineusers
+		subscribers_alt = subscribers.replace(",","")
+		onlineusers_alt = onlineusers.replace(",","")
+		subredditInfo['subscribers'] = subscribers_alt
+		subredditInfo['users'] = onlineusers_alt
+		subredditInfo['subreddit'] = "xxx"#posts
 
 		yield subredditInfo
