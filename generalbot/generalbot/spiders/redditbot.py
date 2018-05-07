@@ -7,9 +7,9 @@ class RedditSpider(scrapy.Spider):
 	#spider name
 	name = 'redditbot'
 	#list of allowed domains
-	allowed_domains = ['www.reddit.com/r/programming/']
+	allowed_domains = ['www.reddit.com/r/Nootropics/']
 	#staring url for scraping
-	start_urls = ['https://www.reddit.com/r/programming/']
+	start_urls = ['https://www.reddit.com/r/Nootropics/']
 	#location of csv file
 	custom_settings = {
 		'FEED_URI' : 'tmp/reddit.csv',
@@ -32,6 +32,10 @@ class RedditSpider(scrapy.Spider):
 		including_subs = response.css('.md a::attr(href)').getall()
         #including_subs2 = response          .xpath("//div[@class='md']/a")
 		info('subscribers: '+ subscribers[0])
+
+		announcement_times = response.xpath("//*[contains(@class,'stickied-tagline')]/..").css("time::attr(title)").extract()
+		# if d(times) in announcment_times:
+		#	continue
 
 		#subs = including_subs.getall()
 		subs = [x for x in including_subs if re.search(r'^\/r\/', x)]
