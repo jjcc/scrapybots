@@ -8,9 +8,14 @@ from dateutil import parser as dparser
 import os
 
 def main():
-    #list = pickle.load(open("data.pkl", "rb"))
-    list = pickle.load(open("generalbot/data.pkl", "rb")) #if run with vscode open folder"SPCAPYBOT"
+    list = pickle.load(open("datan.pkl", "rb"))
+    #list = pickle.load(open("generalbot/datan.pkl", "rb")) #if run with vscode open folder"SPCAPYBOT"
+    metainfo = None
     for d in list:
+        if not 'created_at' in d.keys():
+            metainfo = d
+            list.remove(d)
+            continue
         d['created_at'] = dparser.parse(d['created_at'])
         vote  = 0 if  d['vote'] == u'\u2022' else d['vote']
         print vote ,d['created_at']
