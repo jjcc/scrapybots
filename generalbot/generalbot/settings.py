@@ -52,9 +52,10 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
+SPIDER_MIDDLEWARES = {
 #    'generalbot.middlewares.GeneralbotSpiderMiddleware': 543,
-#}
+    'generalbot.middlewares.GeneralbotSpiderMiddlewarePostReddit': 543,
+}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
@@ -96,3 +97,4 @@ FEED_EXPORT_ENCODING = 'utf-8'
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+LOG_LEVEL = 'INFO'
