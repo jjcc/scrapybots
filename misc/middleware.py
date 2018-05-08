@@ -59,4 +59,5 @@ class CustomHttpProxyMiddleware(object):
 class CustomUserAgentMiddleware(object):
     def process_request(self, request, spider):
         agent = random.choice(AGENTS)
+        log.info("XXX-agent:%s"%agent)
         request.headers['User-Agent'] = agent

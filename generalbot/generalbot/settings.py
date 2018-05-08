@@ -58,10 +58,11 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'generalbot.middlewares.GeneralbotDownloaderMiddleware': 543,
-#}
-
+DOWNLOADER_MIDDLEWARES = {
+   # 'generalbot.middlewares.GeneralbotDownloaderMiddleware': 543,
+   # 'misc.middleware.CustomHttpProxyMiddleware': 400,
+   'misc.middleware.CustomUserAgentMiddleware': 401,
+}
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 #EXTENSIONS = {

@@ -11,6 +11,9 @@ class RedditSpider(scrapy.Spider):
     allowed_domains = ['www.reddit.com/r/Nootropics/']
     # staring url for scraping
     start_urls = ['https://www.reddit.com/r/Nootropics/']
+    #for url in open("/path_to/urls.txt"):
+    #    start_urls.append(url)
+
     # location of csv file
     custom_settings = {
         'FEED_URI': 'tmp/reddit.csv',
@@ -23,11 +26,13 @@ class RedditSpider(scrapy.Spider):
         # Extracting the content using css selectors(earlier logic)
         titles = response.css('.title.may-blank::text').extract()
         votes = response.css('.score.unvoted::text').extract()
-        times = response.css('time::attr(title)').extract()
+        times = response.css('time.live-timestamp ::attr(title)').extract()
         comments = response.css('.comments::text').extract()
         # Give the extracted content row wise.
         # subscribers = response.css('.subscribers>span:nth-child(1)::text').extract()
         users = response.css('.number::text').extract()  # 0: subscriber, 1: user online
+        if len(users) < 2:
+            pass
         subscribers = users[0]
         onlineusers = users[1]
         including_subs = response.css('.md a::attr(href)').getall()
