@@ -6,7 +6,7 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-
+from generalbot.items import *
 
 class GeneralbotSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -158,13 +158,18 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
     def process_spider_output(self, response, result, spider):
         # Called with the results returned from the Spider, after
         # it has processed the response.
-
+        url = response.request.url
+        spider.logger.info(">>>process output in mw")
+        spider.logger.info(url)
         # Must return an iterable of Request, dict or Item objects.
         for i in result:
 
             #spider.logger.info(i)
             yield i
+            #info = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"
+            #spider.logger.info(info)
             pass
+        spider.logger.info("<<result:")
         spider.logger.info(result)
 
     def process_spider_exception(self, response, exception, spider):

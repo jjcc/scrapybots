@@ -10,7 +10,8 @@ class RedditSpider(scrapy.Spider):
     # list of allowed domains
     allowed_domains = ['www.reddit.com']
     # staring url for scraping
-    start_urls = ['https://www.reddit.com/r/Nootropics/']
+    start_urls = ['https://www.reddit.com/r/Nootropics/',
+                  'https://www.reddit.com/r/eos/']
     #for url in open("/path_to/urls.txt"):
     #    start_urls.append(url)
 
@@ -22,7 +23,19 @@ class RedditSpider(scrapy.Spider):
         }
     }
 
+    def start_requests(self):
+        for u in self.start_urls:
+            yield scrapy.Request(u, callback=self.parse,
+                                    errback=self.errback_httpbin,
+                                    dont_filter=True)
+
+
     def parse(self, response):
+        url = response.request.url
+        reqinfo = {}
+        reqinfo['mark'] = "IIIIII"
+        reqinfo['url'] = url
+        #yield reqinfo
         # Extracting the content using css selectors(earlier logic)
         titles = response.css('.title.may-blank::text').extract()
         votes = response.css('.score.unvoted::text').extract()
@@ -32,9 +45,8 @@ class RedditSpider(scrapy.Spider):
         # subscribers = response.css('.subscribers>span:nth-child(1)::text').extract()
         users = response.css('.number::text').extract()  # 0: subscriber, 1: user online
         if len(users) < 2:
-            url = response.request.url
             yield response.follow( url,  callback=self.parse)
-            pass
+            return
         subscribers = users[0]
         onlineusers = users[1]
         including_subs = response.css('.md a::attr(href)').getall()
@@ -43,8 +55,6 @@ class RedditSpider(scrapy.Spider):
 
         announcement_times = response.xpath("//*[contains(@class,'stickied-tagline')]/..").css(
             "time::attr(title)").extract()
-        # if d(times) in announcment_times:
-        #	continue
 
         # subs = including_subs.getall()
         subs = [x for x in including_subs if re.search(r'^\/r\/', x)]
@@ -81,3 +91,8 @@ class RedditSpider(scrapy.Spider):
         subredditInfo['subreddit'] = "xxx"  # posts
 
         yield subredditInfo
+
+
+    def errback_httpbin(selfs):
+        info("###Error processing call back")
+        pass
