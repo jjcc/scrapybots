@@ -80,7 +80,7 @@ class RedditSpider(scrapy.Spider):
 
             # yield or give the scraped info to scrapy
             # yield scraped_info
-            yield itm
+            yield { "url":url,"item": itm}
         # posts.append(itm)
 
         subredditInfo = RedditItem()
@@ -90,7 +90,7 @@ class RedditSpider(scrapy.Spider):
         subredditInfo['users'] = onlineusers_alt
         subredditInfo['subreddit'] = "xxx"  # posts
 
-        yield subredditInfo
+        yield {'url':url, 'item':subredditInfo}
 
 
     def errback_httpbin(selfs):

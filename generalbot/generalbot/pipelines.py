@@ -14,16 +14,28 @@ class GeneralbotPipeline(object):
         self.file = codecs.open('data_utf8n.cvs', 'w', encoding='utf-8')
         self.pickle = open("datan.pkl","wb")
         self.data = []
+        self.data2 = {}
         info(">>>GeneralPipeline Starting")
 
     def process_item(self, item, spider):
-        line =  [ item[v] for v in item]
+        line =  [ item['item'][v] for v in item['item']]
         l = ",".join(line) +'\n'#json.dumps(OrderedDict(item), ensure_ascii=False, sort_keys=False) + "\n"
-        self.file.write(l)
+        ll = item['url'] + "," + l
+        #self.file.write(ll)
+        if item['url'] not in self.data2:
+            self.data2[item['url']] = []
+        self.data2[item['url']].append(item['item'])
+
         self.data.append(item)
         return item
 
     def close_spider(self, spider):
+        for kurl,v in self.data2.iteritems():
+            for item in v:
+                line = [item[i] for i in item ]
+                l = ",".join(line)
+                ll = kurl + " ," + l + "\n"
+                self.file.write(ll)
         self.file.close()
         pickle.dump(self.data,self.pickle)
         info("<<<GeneralPipeline Closing")

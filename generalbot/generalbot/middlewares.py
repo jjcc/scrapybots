@@ -162,12 +162,16 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
         spider.logger.info(">>>process output in mw")
         spider.logger.info(url)
         # Must return an iterable of Request, dict or Item objects.
-        for i in result:
+        for r in result:
 
             #spider.logger.info(i)
-            yield i
-            #info = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"
-            #spider.logger.info(info)
+            yield r
+            if type(r) is dict:
+                i = r['item']
+                info = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"
+                spider.logger.info(info)
+            else:
+                spider.logger.info("r is not dict but Request")
             pass
         spider.logger.info("<<result:")
         spider.logger.info(result)
