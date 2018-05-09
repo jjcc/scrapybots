@@ -7,8 +7,8 @@ import types
 from dateutil import parser as dparser
 import os
 
-def main():
-    list = pickle.load(open("datan.pkl", "rb"))
+def calculate(list):
+    #list = pickle.load(open("datan.pkl", "rb"))
     #list = pickle.load(open("generalbot/datan.pkl", "rb")) #if run with vscode open folder"SPCAPYBOT"
     metainfo = None
     for d in list:
@@ -54,4 +54,9 @@ def main():
     #dtdelta.total_seconds()
 
 if  __name__ =='__main__':
-    main()
+
+    data = pickle.load(open("datan.pkl", "rb"))
+    for k, list in data.iteritems():
+        print "############%s\n"%k
+
+        calculate(list)

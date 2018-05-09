@@ -37,7 +37,7 @@ class GeneralbotPipeline(object):
                 ll = kurl + " ," + l + "\n"
                 self.file.write(ll)
         self.file.close()
-        pickle.dump(self.data,self.pickle)
+        pickle.dump(self.data2,self.pickle)
         info("<<<GeneralPipeline Closing")
         self.pickle.close()
 

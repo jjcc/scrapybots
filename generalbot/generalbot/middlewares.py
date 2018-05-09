@@ -168,7 +168,7 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
             yield r
             if type(r) is dict:
                 i = r['item']
-                info = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"
+                info = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"+ i['subscribers']
                 spider.logger.info(info)
             else:
                 spider.logger.info("r is not dict but Request")
