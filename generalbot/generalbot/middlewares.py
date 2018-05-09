@@ -151,7 +151,8 @@ class GeneralbotSpiderMiddleware(object):
 
 
 class GeneralbotSpiderMiddlewarePostReddit(object):
-
+    """Post process for reddit scrapping
+    """
 
 
     def process_spider_output(self, response, result, spider):
@@ -161,8 +162,10 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
         # Must return an iterable of Request, dict or Item objects.
         for i in result:
 
-            spider.logger.info(i)
+            #spider.logger.info(i)
             yield i
+            pass
+        spider.logger.info(result)
 
     def process_spider_exception(self, response, exception, spider):
         # Called when a spider or process_spider_input() method

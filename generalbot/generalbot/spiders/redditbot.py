@@ -8,7 +8,7 @@ class RedditSpider(scrapy.Spider):
     # spider name
     name = 'redditbot'
     # list of allowed domains
-    allowed_domains = ['www.reddit.com/r/Nootropics/']
+    allowed_domains = ['www.reddit.com']
     # staring url for scraping
     start_urls = ['https://www.reddit.com/r/Nootropics/']
     #for url in open("/path_to/urls.txt"):
@@ -32,6 +32,8 @@ class RedditSpider(scrapy.Spider):
         # subscribers = response.css('.subscribers>span:nth-child(1)::text').extract()
         users = response.css('.number::text').extract()  # 0: subscriber, 1: user online
         if len(users) < 2:
+            url = response.request.url
+            yield response.follow( url,  callback=self.parse)
             pass
         subscribers = users[0]
         onlineusers = users[1]
