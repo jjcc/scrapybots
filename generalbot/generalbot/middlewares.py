@@ -156,6 +156,8 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
 
 
     def process_spider_output(self, response, result, spider):
+        if 'reddit' not in response.url:
+            return
         # Called with the results returned from the Spider, after
         # it has processed the response.
         url = response.request.url
