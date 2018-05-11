@@ -52,7 +52,7 @@ class GeneralbotPipeline(object):
 
 class CryptobotPipeline(object):
     def __init__(self):
-        self.file = codecs.open('crypto_utf8n.cvs', 'w', encoding='utf-8')
+        self.file = codecs.open('crypto_utf8n.json', 'w', encoding='utf-8')
         self.file.write("[\n")
         self.pickle = open("crypton.pkl","wb")
         self.data = []
@@ -62,7 +62,7 @@ class CryptobotPipeline(object):
     def process_item(self, item, spider):
 
         # self.data.append(item)
-        data = json.dumps(item) + ",\n"
+        data = json.dumps(OrderedDict(item)) + ",\n"
         self.file.write(data)
         return data
 
