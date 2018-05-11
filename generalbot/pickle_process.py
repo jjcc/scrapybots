@@ -3,9 +3,7 @@ Created on 2018-03-06
 @author: jjccforth
 '''
 import pickle
-import types
 from dateutil import parser as dparser
-import os
 
 def calculate(list):
     #list = pickle.load(open("datan.pkl", "rb"))
@@ -18,12 +16,10 @@ def calculate(list):
             continue
         d['created_at'] = dparser.parse(d['created_at'])
         vote  = 0 if  d['vote'] == u'\u2022' else d['vote']
-        print vote ,d['created_at']
-#    print type(list)
-    #print list['vote'],list['created_at']
+        #print vote ,d['created_at']
     list0 =  list
     list_s = list.sort(key=lambda item:item['created_at'], reverse=True)
-    print "$$$$$$$$$$$$$\n"
+    #print "$$$$$$$$$$$$$\n"
     count  = 0
     dt_deltas = [0]
     dt_prev = None
@@ -43,20 +39,24 @@ def calculate(list):
         if comments_no == "comment":
             comments_no = 0
         vote = d['vote'] if d['vote'] != u'\u2022' else 0 #"."
-        print vote ,d['created_at'],comments_no,dt_deltas[count]
+        #print vote ,d['created_at'],comments_no,dt_deltas[count]
         count += 1
         #get stats
         sum_comments += int(comments_no)
 
-    print "stats:total delta:%d, total comments:%d"%(sum_delta,sum_comments)    
+    #print "stats:total delta:%d, total comments:%d,count:%d"%(sum_delta,sum_comments,count)
 
+    meta  = [ metainfo[k] for k in metainfo]
+    #print "meta:%s"%".".join(meta)
     #dtdelta = dt2 - dt1
     #dtdelta.total_seconds()
+    return (sum_delta,sum_comments,count,meta[1],meta[0])
 
 if  __name__ =='__main__':
 
     data = pickle.load(open("datan.pkl", "rb"))
     for k, list in data.iteritems():
-        print "############%s\n"%k
-
-        calculate(list)
+        print "############%s"%k
+        metrices = calculate(list)
+        print "total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n"%metrices
+        #print
