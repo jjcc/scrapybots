@@ -49,10 +49,12 @@ class RedditSpider(scrapy.Spider):
 
     def parse_site(self,response):
         urlgroup = response.css('.list-unstyled')[0]
+        name = response.css('.text-large::text').extract()[3].strip()
+        #reddit = response.css(".reddit-title a::attr(href)").extraxt()
         print response.url
         urls = urlgroup.css('a::attr(href)').extract()
         keys = urlgroup.css("a::text").extract()
-        info = {}
+        info = { u'Name':name}
         for i, key in  enumerate(keys):
             info[key] = urls[i]
 
