@@ -5,7 +5,7 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-from scrapy import signals
+from scrapy import signals, http
 from generalbot.items import *
 
 class GeneralbotSpiderMiddleware(object):
@@ -196,5 +196,50 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class GeneralbotSpiderMiddlewarePostCrypto(object):
+    """Post process for crypto scrapping
+    """
+
+
+    def process_spider_output(self, response, result, spider):
+        # Called with the results returned from the Spider, after
+        # it has processed the response.
+        url = response.request.url
+        spider.logger.info(">>>process output in croypto mw")
+        #spider.logger.info(url)
+        # Must return an iterable of Request, dict or Item objects.
+        for r in result:
+            #spider.logger.info(i)
+            yield r
+            if 'coinmarket' not in response.url:
+                continue
+            #if type(r) == http.request.Request:
+            #    spider.Request(r, callback=spider.parse)
+            #print r
+            pass
+        #spider.logger.info("<<result:")
+        #spider.logger.info(result)
+
+    def process_spider_exception(self, response, exception, spider):
+        # Called when a spider or process_spider_input() method
+        # (from other spider middleware) raises an exception.
+
+        # Should return either None or an iterable of Response, dict
+        # or Item objects.
+        pass
+
+#    def process_start_requests(self, start_requests, spider):
+#        # Called with the start requests of the spider, and works
+#        # similarly to the process_spider_output() method, except
+#        # that it doesn’t have a response associated.
+#
+#        # Must return only requests (not items).
+#        for r in start_requests:
+#            yield r
+
+    def spider_opened(self, spider):
+        spider.logger.info('Spider opened(crypto: %s' % spider.name)
 
 
