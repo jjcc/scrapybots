@@ -4,7 +4,7 @@ from misc.log import *
 import re
 from scrapy.selector import Selector
 from generalbot.items import *
-from generalbot.helpers import CrytoHelper
+from generalbot.helpers import CryptoHelper
 
 class CryptoSpider(scrapy.Spider):
     # spider name
@@ -15,7 +15,7 @@ class CryptoSpider(scrapy.Spider):
     start_urls = ['https://coinmarketcap.com']
     #for url in open("/path_to/urls.txt"):
     #    start_urls.append(url)
-
+    data2 = {}
     # location of csv file
     custom_settings = {
         #'FEED_URI': 'tmp/crypto.csv',
@@ -84,6 +84,9 @@ class CryptoSpider(scrapy.Spider):
     def parse_website(self,response):
         url = response.request.url
         rank = response.meta['rank']
+        helper = CryptoHelper()
+        helper.process_coinsite(response, rank,self)
+
         print("web: %s, rank:%d"%(url,rank))
         pass
 

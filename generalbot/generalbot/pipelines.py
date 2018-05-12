@@ -60,8 +60,9 @@ class CryptobotPipeline(object):
         info(">>>CryptoPipeline Starting")
 
     def process_item(self, item, spider):
-
-        self.data2[item['Rank']]=item
+        if item['Rank'] not in spider.data2.keys():
+            spider.data2[item['Rank']] = {}
+        spider.data2[item['Rank']]['coininfo'] = item
         data = json.dumps(OrderedDict(item),sort_keys=True, indent=4) + ",\n"
         self.file.write(data)
         return data
@@ -71,12 +72,12 @@ class CryptobotPipeline(object):
         self.file.write("]")
         self.file.close()
         # pickle.dump(self.data2,self.pickle)
-        ranklist = self.data2.keys()
+        ranklist = spider.data2.keys()
         ranklist.sort()
         file2  = codecs.open('crypto_utf8m.json', 'w', encoding='utf-8')
         file2.write("[\n")
         for rank in ranklist:
-            item = self.data2[rank]
+            item = spider.data2[rank]
             data = json.dumps(OrderedDict(item),sort_keys=True, indent=4) + ",\n"
             file2.write(data)
         file2.write("]\n")
