@@ -1,15 +1,16 @@
+# -*- coding: utf-8 -*-
 import scrapy
 from misc.log import *
 import re
 from scrapy.selector import Selector
 from generalbot.items import *
+from generalbot.helpers import CrytoHelper
 
-
-class RedditSpider(scrapy.Spider):
+class CryptoSpider(scrapy.Spider):
     # spider name
     name = 'cryptobot'
     # list of allowed domains
-    allowed_domains = ['coinmarketcap.com']
+    allowed_domains = []#'coinmarketcap.com']
     # staring url for scraping
     start_urls = ['https://coinmarketcap.com']
     #for url in open("/path_to/urls.txt"):
@@ -39,15 +40,15 @@ class RedditSpider(scrapy.Spider):
 
         items = []
         sel = Selector(response)
-        sites = sel.css('.currency-name-container')#[0:5]
+        sites = sel.css('.currency-name-container')[0:5]
 
         for path in sites.css('a::attr(href)').extract(): #sites.xpath('//a/@href').extract():
             coinurl = url + path
-            yield scrapy.Request(coinurl, callback=self.parse_site)
+            yield scrapy.Request(coinurl, callback=self.parse_coin)
 
 
 
-    def parse_site(self,response):
+    def parse_coin(self,response):
         urlgroup = response.css('.list-unstyled')[0]
         name = response.css('.text-large::text').extract()[3].strip()
         rank = response.css('.label-success::text').extract()[0].replace("Rank","").strip()
@@ -72,10 +73,19 @@ class RedditSpider(scrapy.Spider):
         for i, key in  enumerate(keys):
             info[key] = urls[i]
 
+        if info.has_key(u'Website'):
+            weburl = info[u'Website']
+            #self.rank = rank
+            yield scrapy.Request(weburl, callback=self.parse_website, meta={'rank': int(rank)} )
         yield info
         pass
 
 
+    def parse_website(self,response):
+        url = response.request.url
+        rank = response.meta['rank']
+        print("web: %s, rank:%d"%(url,rank))
+        pass
 
     def errback_httpbin(selfs):
         info("###Error processing call back")
