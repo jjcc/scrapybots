@@ -39,7 +39,7 @@ class RedditSpider(scrapy.Spider):
 
         items = []
         sel = Selector(response)
-        sites = sel.css('.currency-name-container')[0:5]
+        sites = sel.css('.currency-name-container')#[0:5]
 
         for path in sites.css('a::attr(href)').extract(): #sites.xpath('//a/@href').extract():
             coinurl = url + path
@@ -50,11 +50,25 @@ class RedditSpider(scrapy.Spider):
     def parse_site(self,response):
         urlgroup = response.css('.list-unstyled')[0]
         name = response.css('.text-large::text').extract()[3].strip()
+        rank = response.css('.label-success::text').extract()[0].replace("Rank","").strip()
+        price = response.css('span.text-large2::text')[0].extract()
+        #change_perct = response.css('span.text-large2 span::text')[0].extract()
+        #market_cap = response.css('.coin-summary-item-detail').extract()
+        market_cap = response.css('.coin-summary-item-detail span::text').extract()[1]
+        #1: market capital(USD)
+        #6: market capital(BTC)
+        #10: valumn(USD)
+        #15: valumn(BTC)
+        #17: circulating supply(XXX)
+        #18(optional): max supply(XXX)
+
         #reddit = response.css(".reddit-title a::attr(href)").extraxt()
         print response.url
         urls = urlgroup.css('a::attr(href)').extract()
         keys = urlgroup.css("a::text").extract()
         info = { u'Name':name}
+        info[u'Rank'] = int(rank)
+        info[u'MarketCap'] = market_cap
         for i, key in  enumerate(keys):
             info[key] = urls[i]
 
