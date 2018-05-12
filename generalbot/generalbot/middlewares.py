@@ -156,18 +156,17 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
 
 
     def process_spider_output(self, response, result, spider):
-        if 'reddit' not in response.url:
-            return
         # Called with the results returned from the Spider, after
         # it has processed the response.
         url = response.request.url
-        spider.logger.info(">>>process output in mw")
-        spider.logger.info(url)
+        #spider.logger.info(">>>process output in mw")
+        #spider.logger.info(url)
         # Must return an iterable of Request, dict or Item objects.
         for r in result:
-
             #spider.logger.info(i)
             yield r
+            if 'reddit' not in response.url:
+                continue
             if type(r) is dict:
                 i = r['item']
                 info = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"+ i['subscribers']
@@ -175,8 +174,8 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
             else:
                 spider.logger.info("r is not dict but Request")
             pass
-        spider.logger.info("<<result:")
-        spider.logger.info(result)
+        #spider.logger.info("<<result:")
+        #spider.logger.info(result)
 
     def process_spider_exception(self, response, exception, spider):
         # Called when a spider or process_spider_input() method
