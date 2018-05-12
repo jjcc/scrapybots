@@ -55,6 +55,7 @@ ROBOTSTXT_OBEY = True
 SPIDER_MIDDLEWARES = {
 #    'generalbot.middlewares.GeneralbotSpiderMiddleware': 543,
     'generalbot.middlewares.GeneralbotSpiderMiddlewarePostReddit': 543,
+    'generalbot.middlewares.GeneralbotSpiderMiddlewarePostCrypto': 544,
 }
 
 # Enable or disable downloader middlewares
