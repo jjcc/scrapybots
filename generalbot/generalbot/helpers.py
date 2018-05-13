@@ -31,6 +31,15 @@ class CryptoHelper(object):
             if 'linkedin' in address:
                 spider.data2[rank]['extrainfo']['linkedin'] = address
                 print("linkein: %s"%address)
+            if 'telegram' in address:
+                spider.data2[rank]['extrainfo']['telegram'] = address
+                print("telegram: %s"%address)
+            if 'slack' in address:
+                spider.data2[rank]['extrainfo']['slack'] = address
+                print("slack: %s"%address)
+            if 'wechat' in address:
+                spider.data2[rank]['extrainfo']['wechat'] = address
+                print("wechat: %s"%address)
         pass
 
 

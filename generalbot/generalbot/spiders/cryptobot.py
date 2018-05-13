@@ -40,7 +40,7 @@ class CryptoSpider(scrapy.Spider):
 
         items = []
         sel = Selector(response)
-        sites = sel.css('.currency-name-container')[0:5]
+        sites = sel.css('.currency-name-container')#[0:5]
 
         for path in sites.css('a::attr(href)').extract(): #sites.xpath('//a/@href').extract():
             coinurl = url + path
@@ -51,6 +51,7 @@ class CryptoSpider(scrapy.Spider):
     def parse_coin(self,response):
         urlgroup = response.css('.list-unstyled')[0]
         name = response.css('.text-large::text').extract()[3].strip()
+        symbol = response.css('small.hidden-xs::text').extract()[0].replace('(','').replace(')','')
         rank = response.css('.label-success::text').extract()[0].replace("Rank","").strip()
         price = response.css('span.text-large2::text')[0].extract()
         #change_perct = response.css('span.text-large2 span::text')[0].extract()
@@ -68,6 +69,7 @@ class CryptoSpider(scrapy.Spider):
         urls = urlgroup.css('a::attr(href)').extract()
         keys = urlgroup.css("a::text").extract()
         info = { u'Name':name}
+        info[u'Symbol'] = symbol
         info[u'Rank'] = int(rank)
         info[u'MarketCap'] = market_cap
         for i, key in  enumerate(keys):
