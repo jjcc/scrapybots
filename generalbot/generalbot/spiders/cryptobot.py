@@ -3,6 +3,7 @@ import scrapy
 from misc.log import *
 import re
 from scrapy.selector import Selector
+from datetime import datetime
 from generalbot.items import *
 from generalbot.helpers import CryptoHelper
 
@@ -72,6 +73,8 @@ class CryptoSpider(scrapy.Spider):
         info[u'Symbol'] = symbol
         info[u'Rank'] = int(rank)
         info[u'MarketCap'] = market_cap
+        info[u'Price'] = price
+        info[u'Date'] = datetime.now().strftime("%Y-%m-%d")
         for i, key in  enumerate(keys):
             info[key] = urls[i]
 
