@@ -92,7 +92,7 @@ class CryptoSpider(scrapy.Spider):
         helper = CryptoHelper()
         helper.process_coinsite(response, rank,self)
 
-        print("web: %s, rank:%d"%(url,rank))
+        info("processed web: %s, rank:%d"%(url,rank))
         pass
 
     def errback_httpbin(selfs):
