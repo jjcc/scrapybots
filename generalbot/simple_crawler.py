@@ -54,7 +54,7 @@ def get_info_by_url( browser, url,dir = ""):
     count = 0
     hrefs = browser.find_elements_by_xpath("//a[@href]")
 
-    targetlinks = ["reddit","github","twitter","facebook"]
+    targetlinks = ["reddit","github","twitter","facebook","t.me","discord"]
 
     exinfo = {}
     for h in hrefs:
@@ -71,12 +71,13 @@ def get_info_by_url( browser, url,dir = ""):
 
 if __name__ == "__main__":
     iconinfo = {}
-    with open("missed.txt","r") as input:
+    with open("missed2.txt","r") as input:
         for line in input:
             line1 = line.replace("* ","")
             tri = line1.split(" ")
             print tri[0],tri[1],tri[2]
-            iconinfo[tri[1]] = {u"Name":tri[0],u"Website":tri[2]}
+            key = int(tri[1])
+            iconinfo[key] = {u"Name":tri[0],u"Website":tri[2]}
 
 
     urls = ["https://www.icon.foundation/"]
