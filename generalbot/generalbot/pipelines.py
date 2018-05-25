@@ -51,10 +51,14 @@ class GeneralbotPipeline(object):
 
 
 class CryptobotPipeline(object):
+    OUTPUT = "output/"
+    PKL = OUTPUT + "crypton.pkl"
+    FILE_ONEBYONE = OUTPUT + "crypto_utf8_incremental.json"
+    FILE_ALLONCE = OUTPUT + "crpyto_utf8_allonce.json"
     def __init__(self):
-        self.file = codecs.open('crypto_utf8n.json', 'w', encoding='utf-8')
-        self.file.write("[\n")
-        self.pickle = open("crypton.pkl","wb")
+        self.fileUsingItem = codecs.open(self.FILE_ONEBYONE, 'w', encoding='utf-8')
+        self.fileUsingItem.write("[\n")
+        self.pickle = open(self.PKL,"wb")
         self.data = []
         self.data2 = {}
         info(">>>CryptoPipeline Starting")
@@ -64,24 +68,24 @@ class CryptobotPipeline(object):
             spider.data2[item['Rank']] = {}
         spider.data2[item['Rank']]['coininfo'] = item
         data = json.dumps(OrderedDict(item),sort_keys=True, indent=4) + ",\n"
-        self.file.write(data)
+        self.fileUsingItem.write(data)
         return data
 
     def close_spider(self, spider):
 
-        self.file.write("]")
-        self.file.close()
+        self.fileUsingItem.write("]")
+        self.fileUsingItem.close()
         # pickle.dump(self.data2,self.pickle)
         ranklist = spider.data2.keys()
         ranklist.sort()
-        file2  = codecs.open('crypto_utf8m.json', 'w', encoding='utf-8')
-        file2.write("[\n")
+        fileOnceAtEnd  = codecs.open(self.FILE_ALLONCE, 'w', encoding='utf-8')
+        fileOnceAtEnd.write("[\n")
         for rank in ranklist:
             item = spider.data2[rank]
             data = json.dumps(OrderedDict(item),sort_keys=True, indent=4) + ",\n"
-            file2.write(data)
-        file2.write("]\n")
-        file2.close()
+            fileOnceAtEnd.write(data)
+        fileOnceAtEnd.write("]\n")
+        fileOnceAtEnd.close()
 
         info("<<<CryptoPipeline Closing")
         self.pickle.close()
