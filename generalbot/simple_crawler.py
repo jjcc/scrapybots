@@ -16,58 +16,57 @@ import platform
 
 import os
 
-chrome_path = r"E:\Software\ChromeDriver\chromedriver.exe"
-#target_url =
-#stock1 = "http://www.investertech.com/tkchart/tkchart.asp?logo=&home=/default.asp&banner=&stkname=MSFT+INTC+DELL+CSCO+JDSU+ORCL+AMAT+GOOG+IBM+BRCM+AAPL+SYMC"
+class SimpleCrawler(object):
+    chrome_path = r"E:\Software\ChromeDriver\chromedriver.exe"
+    #target_url =
+    #stock1 = "http://www.investertech.com/tkchart/tkchart.asp?logo=&home=/default.asp&banner=&stkname=MSFT+INTC+DELL+CSCO+JDSU+ORCL+AMAT+GOOG+IBM+BRCM+AAPL+SYMC"
 
-webdriver.DesiredCapabilities.PHANTOMJS['phantomjs.page.customHeaders.Accept-Language'] = 'en-US,en'
-webdriver.DesiredCapabilities.PHANTOMJS['phantomjs.page.customHeaders.User-Agent'] \
-    = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'
-if platform.system() == 'Linux':
-    phantom_location = '/usr/local/bin/phantomjs'
-else:
-    phantom_location = 'E:/software/phantomjs-2.1.1-windows/bin/phantomjs.exe'
+    webdriver.DesiredCapabilities.PHANTOMJS['phantomjs.page.customHeaders.Accept-Language'] = 'en-US,en'
+    webdriver.DesiredCapabilities.PHANTOMJS['phantomjs.page.customHeaders.User-Agent'] \
+        = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0'
+    if platform.system() == 'Linux':
+        phantom_location = '/usr/local/bin/phantomjs'
+    else:
+        phantom_location = 'E:/software/phantomjs-2.1.1-windows/bin/phantomjs.exe'
 #browser = webdriver.PhantomJS(executable_path=phantom_location)
 
-#define driver
-browser = webdriver.Chrome(chrome_path)
-#launch browser
-#browser.get("http://ottawa.craigslist.ca")
+    #define driver
+    driver = webdriver.Chrome(chrome_path)
+    #launch browser
+    #browser.get("http://ottawa.craigslist.ca")
 
+    def get_info_by_url(self,  url,dir = ""):
+        browser = self.driver
+        '''
+        '''
+        try:
+            browser.set_page_load_timeout(30)
+            browser.get(url)
+        except :
+            print "**wrong",url
+            return {}
+        # wait up to 10 seconds for page to load
+        timeout = 10
+        datestring = datetime.date.today().strftime("%Y%m%d")
+        browser.execute_script("window.scrollTo(0,1000);")
+        time.sleep(5)
+        count = 0
+        hrefs = browser.find_elements_by_xpath("//a[@href]")
 
+        targetlinks = ["reddit","github","twitter","facebook","t.me","discord"]
 
-
-def get_info_by_url( browser, url,dir = ""):
-    '''
-    '''
-    try:
-        browser.set_page_load_timeout(30)
-        browser.get(url)
-    except :
-        print "**wrong",url
-        return {}
-    # wait up to 10 seconds for page to load
-    timeout = 10
-    datestring = datetime.date.today().strftime("%Y%m%d")
-    browser.execute_script("window.scrollTo(0,1000);")
-    time.sleep(5)
-    count = 0
-    hrefs = browser.find_elements_by_xpath("//a[@href]")
-
-    targetlinks = ["reddit","github","twitter","facebook","t.me","discord"]
-
-    exinfo = {}
-    for h in hrefs:
-        link = h.get_attribute("href")
-        for t in targetlinks:
-            if t in link:
-                print t, link
+        exinfo = {}
+        for h in hrefs:
+            link = h.get_attribute("href")
+            for t in targetlinks:
+                if t in link:
+                    print t, link
                 exinfo[t] = link
-    return exinfo
+        return exinfo
 
     #browser.find_elements_by_xpath("//a[@href]")
 
-    return ""
+        return ""
 
 if __name__ == "__main__":
     iconinfo = {}
@@ -82,11 +81,12 @@ if __name__ == "__main__":
 
     urls = ["https://www.icon.foundation/"]
 
+    sc = SimpleCrawler()
     for k,v in iconinfo.iteritems():
         u = v[u"Website"]
-        extracted = get_info_by_url(browser, u )
+        extracted = sc.get_info_by_url( u )
         v[u"extracted"] = extracted
-    fout = open("amendment.json","wb")
+    fout = open("output/amendment.json","wb")
     data = json.dumps(iconinfo,sort_keys=True,indent=4)
     fout.write(data)
     fout.close()
