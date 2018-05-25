@@ -72,16 +72,10 @@ class CryptobotPipeline(object):
         # pickle.dump(self.data2,self.pickle)
         ranklist = spider.data2.keys()
         ranklist.sort()
-        fileOnceAtEnd  = codecs.open(self.FILE_ALLONCE, 'w', encoding='utf-8')
-        fileOnceAtEnd.write("[\n")
-        datax = [json.dumps(OrderedDict(spider.data2[r]),sort_keys=True, indent=4) for r in ranklist]
-        fileOnceAtEnd.write(",\n".join(datax))
-        fileOnceAtEnd.write("]\n")
-        fileOnceAtEnd.close()
-
-        for c in ranklist:
-            item = spider.data2[c]
-        #    fileOnceAtEnd.write(data)
+        #add missing info
+        iconinfox = { } # missing extra info
+        for rank in ranklist:
+            c = spider.data2[rank]
             coininfo = c['coininfo']
             rank = coininfo['Rank']
             #print coininfo['Name']
@@ -90,10 +84,23 @@ class CryptobotPipeline(object):
                 if len(extrainfo) > 0:
                     pass #print "\t",extrainfo["reddit"]
                 else:
+                    iconinfox[rank] ={u"Name":coininfo['Name'],u"Website":coininfo['Website']}
                     print coininfo['Name'],rank,coininfo['Website']
             else:
                 #print "\tno extrainfo"
+                iconinfox[rank] ={u"Name":coininfo['Name'],u"Website":coininfo['Website']}
                 print coininfo['Name'],"*",rank,coininfo['Website']
+
+
+        fileOnceAtEnd  = codecs.open(self.FILE_ALLONCE, 'w', encoding='utf-8')
+        fileOnceAtEnd.write("[\n")
+        datax = [json.dumps(OrderedDict(spider.data2[r]),sort_keys=True, indent=4) for r in ranklist]
+        fileOnceAtEnd.write(",\n".join(datax))
+        fileOnceAtEnd.write("]\n")
+        fileOnceAtEnd.close()
+
+
+
 
         info("<<<CryptoPipeline Closing")
         self.pickle.close()
