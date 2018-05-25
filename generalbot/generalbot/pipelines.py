@@ -53,11 +53,8 @@ class GeneralbotPipeline(object):
 class CryptobotPipeline(object):
     OUTPUT = "output/"
     PKL = OUTPUT + "crypton.pkl"
-    FILE_ONEBYONE = OUTPUT + "crypto_utf8_incremental.json"
-    FILE_ALLONCE = OUTPUT + "crpyto_utf8_allonce.json"
+    FILE_ALLONCE = OUTPUT + "crypto_utf8_allonce.json"
     def __init__(self):
-        self.fileUsingItem = codecs.open(self.FILE_ONEBYONE, 'w', encoding='utf-8')
-        self.fileUsingItem.write("[\n")
         self.pickle = open(self.PKL,"wb")
         self.data = []
         self.data2 = {}
@@ -68,24 +65,35 @@ class CryptobotPipeline(object):
             spider.data2[item['Rank']] = {}
         spider.data2[item['Rank']]['coininfo'] = item
         data = json.dumps(OrderedDict(item),sort_keys=True, indent=4) + ",\n"
-        self.fileUsingItem.write(data)
         return data
 
     def close_spider(self, spider):
 
-        self.fileUsingItem.write("]")
-        self.fileUsingItem.close()
         # pickle.dump(self.data2,self.pickle)
         ranklist = spider.data2.keys()
         ranklist.sort()
         fileOnceAtEnd  = codecs.open(self.FILE_ALLONCE, 'w', encoding='utf-8')
         fileOnceAtEnd.write("[\n")
-        for rank in ranklist:
-            item = spider.data2[rank]
-            data = json.dumps(OrderedDict(item),sort_keys=True, indent=4) + ",\n"
-            fileOnceAtEnd.write(data)
+        datax = [json.dumps(OrderedDict(spider.data2[r]),sort_keys=True, indent=4) for r in ranklist]
+        fileOnceAtEnd.write(",\n".join(datax))
         fileOnceAtEnd.write("]\n")
         fileOnceAtEnd.close()
+
+        for c in ranklist:
+            item = spider.data2[c]
+        #    fileOnceAtEnd.write(data)
+            coininfo = c['coininfo']
+            rank = coininfo['Rank']
+            #print coininfo['Name']
+            if "extrainfo" in c:
+                extrainfo = c['extrainfo']
+                if len(extrainfo) > 0:
+                    pass #print "\t",extrainfo["reddit"]
+                else:
+                    print coininfo['Name'],rank,coininfo['Website']
+            else:
+                #print "\tno extrainfo"
+                print coininfo['Name'],"*",rank,coininfo['Website']
 
         info("<<<CryptoPipeline Closing")
         self.pickle.close()
