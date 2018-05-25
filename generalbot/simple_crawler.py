@@ -61,7 +61,7 @@ class SimpleCrawler(object):
             for t in targetlinks:
                 if t in link:
                     print t, link
-                exinfo[t] = link
+                    exinfo[t] = link
         return exinfo
 
     #browser.find_elements_by_xpath("//a[@href]")
