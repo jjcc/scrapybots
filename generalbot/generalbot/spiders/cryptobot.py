@@ -66,7 +66,7 @@ class CryptoSpider(scrapy.Spider):
         #18(optional): max supply(XXX)
 
         #reddit = response.css(".reddit-title a::attr(href)").extraxt()
-        print response.url
+        print(response.url)
         urls = urlgroup.css('a::attr(href)').extract()
         keys = urlgroup.css("a::text").extract()
         info = { u'Name':name}
