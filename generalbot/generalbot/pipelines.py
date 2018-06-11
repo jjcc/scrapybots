@@ -8,7 +8,7 @@ import codecs
 import pickle
 from collections import OrderedDict
 from misc.log import *
-from misc.metrices import *
+#from misc.metrices import *
 import json
 
 class GeneralbotPipeline(object):
@@ -32,17 +32,17 @@ class GeneralbotPipeline(object):
         return item
 
     def close_spider(self, spider):
-        for kurl,v in self.data2.iteritems():
-
+        #for kurl,v in self.data2.iteritems():
+        for kurl, v in self.data2.items():
             for item in v:
                 line = [item[i] for i in item ]
                 l = ",".join(line)
                 ll = kurl + " ," + l + "\n"
                 self.file.write(ll)
 
-            print "############%s"%kurl
+            print ("############%s"%kurl)
             metrices = calculate(v)
-            print "total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n"%metrices
+            print ("total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n"%metrices)
         self.file.close()
         pickle.dump(self.data2,self.pickle)
 
@@ -85,11 +85,11 @@ class CryptobotPipeline(object):
                     pass #print "\t",extrainfo["reddit"]
                 else:
                     iconinfox[rank] ={u"Name":coininfo['Name'],u"Website":coininfo['Website']}
-                    print coininfo['Name'],rank,coininfo['Website']
+                    print( coininfo['Name'],rank,coininfo['Website'])
             else:
                 #print "\tno extrainfo"
                 iconinfox[rank] ={u"Name":coininfo['Name'],u"Website":coininfo['Website']}
-                print coininfo['Name'],"*",rank,coininfo['Website']
+                print(coininfo['Name'],"*",rank,coininfo['Website'])
 
 
         fileOnceAtEnd  = codecs.open(self.FILE_ALLONCE, 'w', encoding='utf-8')
