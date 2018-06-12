@@ -8,7 +8,7 @@ import codecs
 import pickle
 from collections import OrderedDict
 from misc.log import *
-#from misc.metrices import *
+from misc.metrices import *
 import json
 
 class GeneralbotPipeline(object):
