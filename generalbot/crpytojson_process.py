@@ -12,7 +12,7 @@ def process(file):
        #print coininfo['Name']
        if "extrainfo" in c:
            extrainfo = c['extrainfo']
-           if "reddit" in extrainfo:
+           if len(extrainfo) > 0:
                pass #print "\t",extrainfo["reddit"]
            else:
                print coininfo['Name'],rank,coininfo['Website']
@@ -22,6 +22,7 @@ def process(file):
 
 
 if __name__ == '__main__':
-    process("crypto_utf8a.json")
+    file = "output/crypto_utf8_allonce.json"
+    process(file)
 
 

@@ -6,7 +6,8 @@ import scrapy.cmdline
 
 
 def main():
-    scrapy.cmdline.execute(argv=['scrapy', 'crawl', 'redditbot'])
+    #scrapy.cmdline.execute(argv=['scrapy', 'crawl', 'redditbot'])
+    scrapy.cmdline.execute(argv=['scrapy', 'crawl', 'cryptobot'])
     #scrapy.cmdline.execute(argv=['scrapy', 'crawl', 'techcrunch'])
     #scrapy.cmdline.execute(argv=['scrapy', 'crawl', 'shopclues'])
 
