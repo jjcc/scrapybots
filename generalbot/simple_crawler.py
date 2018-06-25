@@ -43,7 +43,7 @@ class SimpleCrawler(object):
             browser.set_page_load_timeout(30)
             browser.get(url)
         except :
-            print "**wrong",url
+            print ("**wrong",url)
             return {}
         # wait up to 10 seconds for page to load
         timeout = 10
@@ -60,7 +60,7 @@ class SimpleCrawler(object):
             link = h.get_attribute("href")
             for t in targetlinks:
                 if t in link:
-                    print t, link
+                    print (t, link)
                     exinfo[t] = link
         return exinfo
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         for line in input:
             line1 = line.replace("* ","")
             tri = line1.split(" ")
-            print tri[0],tri[1],tri[2]
+            print (tri[0],tri[1],tri[2])
             key = int(tri[1])
             iconinfo[key] = {u"Name":tri[0],u"Website":tri[2]}
 

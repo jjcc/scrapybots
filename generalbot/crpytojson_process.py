@@ -15,10 +15,10 @@ def process(file):
            if len(extrainfo) > 0:
                pass #print "\t",extrainfo["reddit"]
            else:
-               print coininfo['Name'],rank,coininfo['Website']
+               print (coininfo['Name'],rank,coininfo['Website'])
        else:
            #print "\tno extrainfo"
-           print coininfo['Name'],"*",rank,coininfo['Website']
+           print (coininfo['Name'],"*",rank,coininfo['Website'])
 
 
 if __name__ == '__main__':
