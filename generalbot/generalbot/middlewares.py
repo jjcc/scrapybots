@@ -7,6 +7,7 @@
 
 from scrapy import signals, http
 from generalbot.items import *
+import logging
 
 class GeneralbotSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -153,6 +154,21 @@ class GeneralbotSpiderMiddleware(object):
 class GeneralbotSpiderMiddlewarePostReddit(object):
     """Post process for reddit scrapping
     """
+    name = 'middlewareReddit'
+    @property
+    def logger(self):
+        logger = logging.getLogger(self.name)
+        return logging.LoggerAdapter(logger, {'spider': self})
+
+    def log(self, message, level=logging.DEBUG, **kw):
+        """Log the given message at the given log level
+
+        This helper wraps a log call to the logger within the spider, but you
+        can use it directly (e.g. Spider.logger.info('msg')) or use any other
+        Python logger too.
+        """
+        self.logger.log(level, message, **kw)
+
 
 
     def process_spider_output(self, response, result, spider):
@@ -169,10 +185,10 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
                 continue
             if type(r) is dict:
                 i = r['item']
-                info = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"+ i['subscribers']
-                spider.logger.info(info)
+                itemInfo = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"+ i['subscribers']
+                self.log(itemInfo, logging.INFO)
             else:
-                spider.logger.info("r is not dict but Request")
+                self.log("r is not dict but Request", logging.INFO)
             pass
         #spider.logger.info("<<result:")
         #spider.logger.info(result)
