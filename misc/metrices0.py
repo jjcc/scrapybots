@@ -55,8 +55,8 @@ def calculate(list):
 if  __name__ =='__main__':
 
     data = pickle.load(open("datan.pkl", "rb"))
-    for k, list in data.iteritems():
-        print "############%s"%k
+    for k, list in data.items():
+        print ("############%s"%k)
         metrices = calculate(list)
-        print "total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n"%metrices
+        print ("total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n"%metrices)
         #print
