@@ -31,6 +31,7 @@ class RedditSpider(scrapy.Spider):
 
 
     def parse(self, response):
+        info(">>>parsing start")
         url = response.request.url
         reqinfo = {}
         reqinfo['mark'] = "IIIIII"

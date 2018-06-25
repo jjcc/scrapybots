@@ -17,7 +17,7 @@ class RedditbotPipeline(object):
         self.pickle = open("datan.pkl","wb")
         #self.data = []
         self.data2 = {}
-        info(">>>GeneralPipeline Starting")
+        info(">>>RedditBotPipeline Starting")
 
     def process_item(self, item, spider):
         line =  [ item['item'][v] for v in item['item']]
