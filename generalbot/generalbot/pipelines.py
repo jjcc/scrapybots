@@ -11,11 +11,11 @@ from misc.log import *
 from misc.metrices import *
 import json
 
-class GeneralbotPipeline(object):
+class RedditbotPipeline(object):
     def __init__(self):
         self.file = codecs.open('data_utf8n.cvs', 'w', encoding='utf-8')
         self.pickle = open("datan.pkl","wb")
-        self.data = []
+        #self.data = []
         self.data2 = {}
         info(">>>GeneralPipeline Starting")
 
@@ -28,7 +28,7 @@ class GeneralbotPipeline(object):
             self.data2[item['url']] = []
         self.data2[item['url']].append(item['item'])
 
-        self.data.append(item)
+        #self.data.append(item)
         return item
 
     def close_spider(self, spider):
@@ -41,8 +41,8 @@ class GeneralbotPipeline(object):
                 self.file.write(ll)
 
             print ("############%s"%kurl)
-            metrices = calculate(v)
-            print ("total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n"%metrices)
+            #metrices = calculate(v)
+            #print ("total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n"%metrices)
         self.file.close()
         pickle.dump(self.data2,self.pickle)
 

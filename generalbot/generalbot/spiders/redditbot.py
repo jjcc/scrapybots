@@ -19,7 +19,7 @@ class RedditSpider(scrapy.Spider):
     custom_settings = {
         'FEED_URI': 'tmp/reddit.csv',
         'ITEM_PIPELINES': {
-            'generalbot.pipelines.GeneralbotPipeline': 300,
+            'generalbot.pipelines.RedditbotPipeline': 300,
         }
     }
 
