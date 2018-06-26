@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 import scrapy
 from misc.log import *
 import re
 from generalbot.items import *
-
+import datetime
 
 class RedditSpider(scrapy.Spider):
     # spider name
@@ -36,6 +37,11 @@ class RedditSpider(scrapy.Spider):
         reqinfo = {}
         reqinfo['mark'] = "IIIIII"
         reqinfo['url'] = url
+        response_text = response.text
+        fn =  "output/" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + "_response.html"
+        with open(fn, "w",encoding='utf-8') as fout:
+            fout.write(response_text)
+
         #yield reqinfo
         # Extracting the content using css selectors(earlier logic)
         titles = response.css('.title.may-blank::text').extract()
