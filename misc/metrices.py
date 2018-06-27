@@ -1,6 +1,7 @@
 from dateutil import parser
 import pickle
-from generalbot.items import *
+#from generalbot.generalbot.items import * #Normal run
+from generalbot.items import *          #run under generalbot
 from dateutil import parser as dparser
 
 def calculate( itemlist):
@@ -43,7 +44,9 @@ def calculate0(list):
     list_s = list.sort(key=lambda item: item['created_at'], reverse=True)
     # print "$$$$$$$$$$$$$\n"
     count = 0
-    dt_deltas = [0]
+    dt_deltas = [0] #date delta list
+    votes = [0]     #vote list
+    comments = [0]  #comment list
     dt_prev = None
     sec_in_hour = 3600
 
@@ -61,10 +64,12 @@ def calculate0(list):
         if comments_no == "comment":
             comments_no = 0
         vote = d['vote'] if d['vote'] != u'\u2022' else 0  # "."
+        votes.append(vote)
         # print vote ,d['created_at'],comments_no,dt_deltas[count]
         count += 1
         # get stats
         sum_comments += int(comments_no)
+        comments.append(int(comments_no))
 
     # print "stats:total delta:%d, total comments:%d,count:%d"%(sum_delta,sum_comments,count)
 
@@ -72,16 +77,14 @@ def calculate0(list):
     # print "meta:%s"%".".join(meta)
     # dtdelta = dt2 - dt1
     # dtdelta.total_seconds()
-    return (sum_delta, sum_comments, count, meta[1], meta[0])
+    return (sum_delta, sum_comments, count, meta[1], meta[0],dt_deltas,comments,votes)
 
 
 if __name__ == '__main__':
 
     data = pickle.load(open("datan.pkl", "rb"))
-    for k, list in data.iteritems():
-        print
-        "############%s" % k
-        metrices = calculate(list)
-        print
-        "total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n" % metrices
+    for k, list in data.items():
+        print ("############%s" % k)
+        metrices = calculate0(list)
+        print ("total delta:%d, total comments:%d,count:%d, online:%s,subscribers:%s\n" % (metrices[0:5]))
         # print
