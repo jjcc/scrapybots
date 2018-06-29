@@ -87,4 +87,13 @@ if __name__ == '__main__':
         print ("############%s" % k)
         metrices = calculate0(list)
         print ("total delta:%d, total comments:%d,count:%d, online:%s,subscribers:%s\n" % (metrices[0:5]))
+        timinginfo = metrices[5]
+        commentinfo = metrices[6]
+        voteinfo = metrices[7]
+        print ("better data")
+        #df = pd.DataFrame(commentinfo)
+        #df.count()
+        #df.mean()
+        #df.std()]
+        #etc
         # print
