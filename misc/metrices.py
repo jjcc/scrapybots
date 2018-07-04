@@ -3,6 +3,7 @@ import pickle
 #from generalbot.generalbot.items import * #Normal run
 from generalbot.items import *          #run under generalbot
 from dateutil import parser as dparser
+import pandas as pd
 
 def calculate( itemlist):
     comno_list = []
@@ -45,8 +46,8 @@ def calculate0(list):
     # print "$$$$$$$$$$$$$\n"
     count = 0
     dt_deltas = [0] #date delta list
-    votes = [0]     #vote list
-    comments = [0]  #comment list
+    votes = []     #vote list
+    comments = []  #comment list
     dt_prev = None
     sec_in_hour = 3600
 
@@ -64,7 +65,8 @@ def calculate0(list):
         if comments_no == "comment":
             comments_no = 0
         vote = d['vote'] if d['vote'] != u'\u2022' else 0  # "."
-        votes.append(vote)
+        vote_as_num = int(vote)
+        votes.append(vote_as_num)
         # print vote ,d['created_at'],comments_no,dt_deltas[count]
         count += 1
         # get stats
@@ -91,8 +93,15 @@ if __name__ == '__main__':
         commentinfo = metrices[6]
         voteinfo = metrices[7]
         print ("better data")
-        #df = pd.DataFrame(commentinfo)
-        #df.count()
+        info = [timinginfo, commentinfo,voteinfo]
+        strinfo = ['timing','comment','vote']
+        count = 0
+        for i in info:
+            df = pd.DataFrame(i)
+            print (strinfo[count])
+            print ("count:%d,mean:%f, std:%f"%(df.count(),df.mean(),df.std()))
+            count += 1
+
         #df.mean()
         #df.std()]
         #etc
