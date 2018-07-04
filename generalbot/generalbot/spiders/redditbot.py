@@ -13,6 +13,7 @@ class RedditSpider(scrapy.Spider):
     # staring url for scraping
     start_urls = ['https://www.reddit.com/r/Nootropics/',
                   'https://www.reddit.com/r/eos/']
+
     #for url in open("/path_to/urls.txt"):
     #    start_urls.append(url)
 
@@ -38,7 +39,10 @@ class RedditSpider(scrapy.Spider):
         reqinfo['mark'] = "IIIIII"
         reqinfo['url'] = url
         response_text = response.text
-        fn =  "output/" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + "_response.html"
+        topic = url.split('/')[-2]
+        #if topic == "":
+        #    topic
+        fn =  "output/" + topic + "_" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + "_response.html"
         with open(fn, "w",encoding='utf-8') as fout:
             fout.write(response_text)
 
