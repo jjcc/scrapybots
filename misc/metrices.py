@@ -7,6 +7,9 @@ import pickle
 from generalbot.items import *          #run under generalbot
 from dateutil import parser as dparser
 import pandas as pd
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from misc.dbcreate import Topic, RedditInfo, Base
 
 def calculate( itemlist):
     comno_list = []
@@ -84,11 +87,23 @@ def calculate0(list):
 
 if __name__ == '__main__':
 
+    engine = create_engine('sqlite:///bigdata.db')
+    # Bind the engine to the metadata of the Base class so that the
+    # declaratives can be accessed through a DBSession instance
+    Base.metadata.bind = engine
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+
     data = pickle.load(open("datan.pkl", "rb"))
     for k, list in data.items():
+        reddit = RedditInfo(url=k)
+
         print ("############%s" % k)
         metrices = calculate0(list)
         print ("total delta:%d, total comments:%d,count:%d, online:%s,subscribers:%s\n" % (metrices[0:5]))
+        reddit.online = metrices[3]
+        reddit.subscribers = metrices[4]
+
         timinginfo = metrices[5]
         commentinfo = metrices[6]
         voteinfo = metrices[7]
@@ -100,8 +115,19 @@ if __name__ == '__main__':
             df = pd.DataFrame(i)
             print (strinfo[count])
             print ("count:%d,mean:%f, std:%f"%(df.count(),df.mean(),df.std()))
+            if( count == 0):
+                reddit.timedelta_mean = df.mean()
+                reddit.timedelta_std = df.std()
+            if (count == 1):
+                reddit.comment_mean = df.mean()
+                reddit.comment_std = df.std()
+            if (count == 2):
+                reddit.vote_mean = df.mean()
+                reddit.vote_std = df.std()
             count += 1
 
+        session.add(reddit)
+        session.commit()
         #df.mean()
         #df.std()]
         #etc
