@@ -1,4 +1,7 @@
-from dateutil import parser
+'''
+Created on 2018-03-06
+@author: jjccforth
+'''
 import pickle
 #from generalbot.generalbot.items import * #Normal run
 from generalbot.items import *          #run under generalbot
@@ -30,8 +33,6 @@ def calculate( itemlist):
     return
 
 def calculate0(list):
-    # list = pickle.load(open("datan.pkl", "rb"))
-    # list = pickle.load(open("generalbot/datan.pkl", "rb")) #if run with vscode open folder"SPCAPYBOT"
     metainfo = None
     for d in list:
         if not 'created_at' in d.keys():
@@ -43,7 +44,6 @@ def calculate0(list):
         # print vote ,d['created_at']
     list0 = list
     list_s = list.sort(key=lambda item: item['created_at'], reverse=True)
-    # print "$$$$$$$$$$$$$\n"
     count = 0
     dt_deltas = [0] #date delta list
     votes = []     #vote list
@@ -53,7 +53,7 @@ def calculate0(list):
 
     sum_delta = 0
     sum_comments = 0
-    for d in list:
+    for d in list: # it's sorted by the ".sort" method
         if count > 0:
             dt_delta = dt_prev - d['created_at']
             delta_as_day = dt_delta.total_seconds() / sec_in_hour  # sec_in_day
