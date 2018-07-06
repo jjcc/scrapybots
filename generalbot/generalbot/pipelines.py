@@ -44,8 +44,52 @@ class RedditbotPipeline(object):
             #metrices = calculate(v)
             #print ("total delta:%d, total comments:%d,count:%d, subscribers:%s,online:%s\n"%metrices)
         self.file.close()
-        pickle.dump(self.data2,self.pickle)
 
+        #copy from the test code in metrics
+        engine = create_engine('sqlite:///bigdata.db')
+        # Bind the engine to the metadata of the Base class so that the
+        # declaratives can be accessed through a DBSession instance
+        Base.metadata.bind = engine
+        DBSession = sessionmaker(bind=engine)
+        session = DBSession()
+
+        data = self.data2 #pickle.load(open("datan.pkl", "rb"))
+        for k, list in data.items():
+            reddit = RedditInfo(url=k)
+
+            print("############%s" % k)
+            metrices = calculate0(list)
+            print("total delta:%d, total comments:%d,count:%d, online:%s,subscribers:%s\n" % (metrices[0:5]))
+            reddit.online = metrices[3]
+            reddit.subscribers = metrices[4]
+
+            timinginfo = metrices[5]
+            commentinfo = metrices[6]
+            voteinfo = metrices[7]
+            print("better data")
+            info = [timinginfo, commentinfo, voteinfo]
+            strinfo = ['timing', 'comment', 'vote']
+            count = 0
+            for i in info:
+                df = pd.DataFrame(i)
+                print(strinfo[count])
+                print("count:%d,mean:%f, std:%f" % (df.count(), df.mean(), df.std()))
+                if (count == 0):
+                    reddit.timedelta_mean = df.mean()
+                    reddit.timedelta_std = df.std()
+                if (count == 1):
+                    reddit.comment_mean = df.mean()
+                    reddit.comment_std = df.std()
+                if (count == 2):
+                    reddit.vote_mean = df.mean()
+                    reddit.vote_std = df.std()
+                count += 1
+
+            session.add(reddit)
+            session.commit()
+            # df.mean()
+
+        pickle.dump(self.data2,self.pickle)
         info("<<<GeneralPipeline Closing")
         self.pickle.close()
 
