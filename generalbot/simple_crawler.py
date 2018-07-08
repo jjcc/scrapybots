@@ -53,13 +53,28 @@ class SimpleCrawler(object):
         count = 0
         hrefs = browser.find_elements_by_xpath("//a[@href]")
 
-        targetlinks = ["reddit","github","twitter","facebook","t.me","discord"]
-
+        targetlinks = ["reddit","github","twitter","facebook","t.me","discord","linkedin","youtu","wechat"]
+        print(">>>%s"%url)
         exinfo = {}
         for h in hrefs:
             link = h.get_attribute("href")
             for t in targetlinks:
                 if t in link:
+                    #special for github
+                    if t =="github":
+                        if "github.io" in link: #ignore github.io address
+                            continue
+                        match =  re.search("github.com/",link)
+                        if match:
+                            post = match.string[match.end():]
+                            segs = post.split('/')
+                            if len(segs) > 1 and segs[1] != "":
+                                if t in exinfo:
+                                    continue
+                                else:
+                                    exinfo[t] = "https://github.com/" + segs[0]
+                                    print(t,link)
+                                    continue
                     print (t, link)
                     exinfo[t] = link
         return exinfo
@@ -76,17 +91,18 @@ if __name__ == "__main__":
             tri = line1.split(" ")
             print (tri[0],tri[1],tri[2])
             key = int(tri[1])
-            iconinfo[key] = {u"Name":tri[0],u"Website":tri[2]}
+            iconinfo[key] = {u"Name":tri[0],u"Website":tri[2].strip()}
 
 
     urls = ["https://www.icon.foundation/"]
 
     sc = SimpleCrawler()
-    for k,v in iconinfo.iteritems():
+    for k,v in iconinfo.items():
         u = v[u"Website"]
         extracted = sc.get_info_by_url( u )
         v[u"extracted"] = extracted
-    fout = open("output/amendment.json","wb")
+    outputfile = "output/amendment" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+ ".json"
+    fout = open(outputfile,"w")
     data = json.dumps(iconinfo,sort_keys=True,indent=4)
     fout.write(data)
     fout.close()
