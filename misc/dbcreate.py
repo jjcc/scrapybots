@@ -6,7 +6,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, DateTime,Float,BigInteger
 from datetime import datetime
-
+'''
+Thie script creates an empty DB for crypto info
+'''
 Base = declarative_base()
 
 
@@ -16,10 +18,16 @@ class Topic(Base):
     name = Column(String(250))
     describtion = Column(String(250))
     marketcap = Column(BigInteger, nullable=False)
-    web = Column(String(50))
-    reddit = Column(String(50))
-    github = Column(String(50))
-    telegram = Column(String(50))
+    web = Column(String(100))
+    reddit = Column(String(100))
+    github = Column(String(100))
+    telegram = Column(String(100))
+    discord = Column(String(100))
+    twitter = Column(String(100))
+    facebook = Column(String(100))
+    linkedin = Column(String(100))
+    wechat = Column(String(100))
+    youtube = Column(String(100))
 
 
 class RedditInfo(Base):
