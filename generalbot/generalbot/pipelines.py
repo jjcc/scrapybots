@@ -100,14 +100,13 @@ class CryptobotPipeline(object):
     FILE_ALLONCE = OUTPUT + "crypto_utf8_allonce.json"
     def __init__(self):
         self.pickle = open(self.PKL,"wb")
-        self.data = []
-        self.data2 = {}
+        self.data = {}
         info(">>>CryptoPipeline Starting")
 
     def process_item(self, item, spider):
-        if item['Rank'] not in spider.data2.keys():
-            spider.data2[item['Rank']] = {}
-        spider.data2[item['Rank']]['coininfo'] = item
+        if item['Rank'] not in spider.data.keys():
+            spider.data[item['Rank']] = {}
+        spider.data[item['Rank']]['coininfo'] = item
         data = json.dumps(OrderedDict(item),sort_keys=True, indent=4) + ",\n"
         return data
 
@@ -116,11 +115,11 @@ class CryptobotPipeline(object):
         # pickle.dump(self.data2,self.pickle)
         #ranklist = spider.data2.keys()
         #ranklist.sort()
-        ranklist = sorted(spider.data2)
+        ranklist = sorted(spider.data)
         #add missing info
         iconinfox = { } # missing extra info
         for rank in ranklist:
-            c = spider.data2[rank]
+            c = spider.data[rank]
             coininfo = c['coininfo']
             rank = coininfo['Rank']
             #print coininfo['Name']
@@ -139,7 +138,7 @@ class CryptobotPipeline(object):
 
         fileOnceAtEnd  = codecs.open(self.FILE_ALLONCE, 'w', encoding='utf-8')
         fileOnceAtEnd.write("[\n")
-        datax = [json.dumps(OrderedDict(spider.data2[r]),sort_keys=True, indent=4) for r in ranklist]
+        datax = [json.dumps(OrderedDict(spider.data[r]),sort_keys=True, indent=4) for r in ranklist]
         fileOnceAtEnd.write(",\n".join(datax))
         fileOnceAtEnd.write("]\n")
         fileOnceAtEnd.close()

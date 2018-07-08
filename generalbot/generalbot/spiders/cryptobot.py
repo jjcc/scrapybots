@@ -16,7 +16,7 @@ class CryptoSpider(scrapy.Spider):
     start_urls = ['https://coinmarketcap.com']
     #for url in open("/path_to/urls.txt"):
     #    start_urls.append(url)
-    data2 = {}
+    data = {}
     # location of csv file
     custom_settings = {
         #'FEED_URI': 'tmp/crypto.csv',

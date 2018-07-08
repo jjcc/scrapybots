@@ -11,44 +11,44 @@ class CryptoHelper(object):
         soup = BeautifulSoup(response.text, 'lxml')
         info("extra info for rank:%d"%rank)
 
-        if rank not in spider.data2.keys():
-            spider.data2[rank] = {}
-        if 'extrainfo' not in spider.data2[rank]:
-            spider.data2[rank]['extrainfo'] = {}
+        if rank not in spider.data.keys():
+            spider.data[rank] = {}
+        if 'extrainfo' not in spider.data[rank]:
+            spider.data[rank]['extrainfo'] = {}
         for link in soup.find_all('a'):
             address = link.get('href')
             if address is None:
                 info("no href link for this one,rank%d"%rank)
                 continue
             if 'twitter' in address:
-                spider.data2[rank]['extrainfo']['twitter'] = address
+                spider.data[rank]['extrainfo']['twitter'] = address
                 #print("twitter: %s"%address)
             if 'reddit' in address:
-                spider.data2[rank]['extrainfo']['reddit'] = address
+                spider.data[rank]['extrainfo']['reddit'] = address
                 #print("reddit: %s"%address)
             if 'facebook' in address:
-                spider.data2[rank]['extrainfo']['facebook'] = address
+                spider.data[rank]['extrainfo']['facebook'] = address
                 #print("facebook: %s"%address)
             if 'linkedin' in address:
-                spider.data2[rank]['extrainfo']['linkedin'] = address
+                spider.data[rank]['extrainfo']['linkedin'] = address
                 #print("linkein: %s"%address)
             if 'telegram' in address:
-                spider.data2[rank]['extrainfo']['telegram'] = address
+                spider.data[rank]['extrainfo']['telegram'] = address
                 #print("telegram: %s"%address)
             if 't.me' in address:
-                spider.data2[rank]['extrainfo']['telegram'] = address
+                spider.data[rank]['extrainfo']['telegram'] = address
                 #print("telegram: %s"%address)
             if 'discord' in address:
-                spider.data2[rank]['extrainfo']['discord'] = address
+                spider.data[rank]['extrainfo']['discord'] = address
                 #print("telegram: %s"%address)
             if 'slack' in address:
-                spider.data2[rank]['extrainfo']['slack'] = address
+                spider.data[rank]['extrainfo']['slack'] = address
                 #print("slack: %s"%address)
             if 'wechat' in address:
-                spider.data2[rank]['extrainfo']['wechat'] = address
+                spider.data[rank]['extrainfo']['wechat'] = address
                 #print("wechat: %s"%address)
             if 'youtu' in address:
-                spider.data2[rank]['extrainfo']['youtube'] = address
+                spider.data[rank]['extrainfo']['youtube'] = address
                 #print("wechat: %s"%address)
         pass
 
