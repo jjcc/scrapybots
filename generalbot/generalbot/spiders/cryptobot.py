@@ -51,10 +51,10 @@ class CryptoSpider(scrapy.Spider):
 
     def parse_coin(self,response):
         urlgroup = response.css('.list-unstyled')[0]
-        name = response.css('.text-large::text').extract()[3].strip()
-        symbol = response.css('small.hidden-xs::text').extract()[0].replace('(','').replace(')','')
+        name = response.css('.details-panel-item--name::text').extract()[1].strip()
+        symbol = response.css('.text-large::text').extract()[0].replace('(','').replace(')','')
         rank = response.css('.label-success::text').extract()[0].replace("Rank","").strip()
-        price = response.css('span.text-large2::text')[0].extract()
+        price = response.css('.details-panel-item--price__value::text').extract()[0]
         #change_perct = response.css('span.text-large2 span::text')[0].extract()
         #market_cap = response.css('.coin-summary-item-detail').extract()
         market_cap = response.css('.coin-summary-item-detail span::text').extract()[1]
@@ -78,7 +78,7 @@ class CryptoSpider(scrapy.Spider):
         for i, key in  enumerate(keys):
             info[key] = urls[i]
 
-        if info.has_key(u'Website'):
+        if u'Website' in info:
             weburl = info[u'Website']
             #self.rank = rank
             yield scrapy.Request(weburl, callback=self.parse_website, meta={'rank': int(rank)} )
