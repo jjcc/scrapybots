@@ -114,8 +114,9 @@ class CryptobotPipeline(object):
     def close_spider(self, spider):
 
         # pickle.dump(self.data2,self.pickle)
-        ranklist = spider.data2.keys()
-        ranklist.sort()
+        #ranklist = spider.data2.keys()
+        #ranklist.sort()
+        ranklist = sorted(spider.data2)
         #add missing info
         iconinfox = { } # missing extra info
         for rank in ranklist:
