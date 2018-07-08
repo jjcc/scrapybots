@@ -87,11 +87,11 @@ if __name__ == "__main__":
     iconinfo = {}
     with open("missed2.txt","r") as input:
         for line in input:
-            line1 = line.replace("* ","")
-            tri = line1.split(" ")
-            print (tri[0],tri[1],tri[2])
-            key = int(tri[1])
-            iconinfo[key] = {u"Name":tri[0],u"Website":tri[2].strip()}
+            #line1 = line.replace("* ","")
+            tri = line.split(",")
+            print (tri[0],tri[1],tri[2],tri[3])
+            key = int(tri[2])
+            iconinfo[key] = {u"Name":tri[0],u'Symbol':tri[1],u"Website":tri[3].strip()}
 
 
     urls = ["https://www.icon.foundation/"]
