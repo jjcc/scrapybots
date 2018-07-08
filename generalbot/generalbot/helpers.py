@@ -38,6 +38,9 @@ class CryptoHelper(object):
             if 't.me' in address:
                 spider.data2[rank]['extrainfo']['telegram'] = address
                 #print("telegram: %s"%address)
+            if 'discord' in address:
+                spider.data2[rank]['extrainfo']['discord'] = address
+                #print("telegram: %s"%address)
             if 'slack' in address:
                 spider.data2[rank]['extrainfo']['slack'] = address
                 #print("slack: %s"%address)
