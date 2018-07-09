@@ -90,6 +90,7 @@ class CryptoSpider(scrapy.Spider):
         url = response.request.url
         rank = response.meta['rank']
         helper = CryptoHelper()
+        #collect data into spider.data
         helper.process_coinsite(response, rank,self)
 
         info("processed web: %s, rank:%d"%(url,rank))

@@ -16,6 +16,7 @@ class Topic(Base):
     __tablename__ = 'topic'
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
+    symbol = Column(String(10))
     describtion = Column(String(250))
     marketcap = Column(BigInteger, nullable=False)
     web = Column(String(100))

@@ -90,9 +90,9 @@ class RedditbotPipeline(object):
             # df.mean()
 
         pickle.dump(self.data2,self.pickle)
-        info("<<<GeneralPipeline Closing")
         self.pickle.close()
 
+        info("<<<GeneralPipeline Closing")
 
 class CryptobotPipeline(object):
     OUTPUT = "output/"
