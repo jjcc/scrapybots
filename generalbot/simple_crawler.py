@@ -83,22 +83,58 @@ class SimpleCrawler(object):
 
         return ""
 
+def process(file):
+    fp = open(file,"rb");
+    data = json.load(fp)
+    coininfo_filtered = {}
+    for c in data:
+       coininfo = c['coininfo']
+       rank = coininfo['Rank']
+       #print coininfo['Name']
+       noextra = 0
+       if "extrainfo" in c:
+           extrainfo = c['extrainfo']
+           if len(extrainfo) > 0:
+               #pass #print "\t",extrainfo["reddit"]
+               continue
+           else:
+               seq = ( coininfo['Name'],coininfo["Symbol"],"%d"%rank,coininfo['Website'] )
+               print (",".join(seq))
+       else:
+           #print "\tno extrainfo"
+           print (",".join((coininfo['Name'],coininfo["Symbol"],r"%d"%rank,coininfo['Website'],"*")))
+           noextra = 1
+       key = rank
+       coininfo_filtered[key] = {u"name": coininfo['Name'], u'symbol':coininfo['Symbol'],u'website':coininfo['Website'],u'noextra':noextra }
+
+
+    return coininfo_filtered
+
+#if __name__ == '__main__':
+#    file = "output/crypto_utf8_allonce.json"
+#    process(file)
+
+
 if __name__ == "__main__":
-    iconinfo = {}
-    with open("missed2.txt","r") as input:
-        for line in input:
-            #line1 = line.replace("* ","")
-            tri = line.split(",")
-            print (tri[0],tri[1],tri[2],tri[3])
-            key = int(tri[2])
-            iconinfo[key] = {u"Name":tri[0],u'Symbol':tri[1],u"Website":tri[3].strip()}
+    file = "output/crypto_utf8_allonce.json"
+    infofromfile = process(file)
+    iconinfo = infofromfile
+    # iconinfo = {}
+    # with open("missed2.txt","r") as input:
+    #     for line in input:
+    #         #line1 = line.replace("* ","")
+    #         tri = line.split(",")
+    #         print (tri[0],tri[1],tri[2],tri[3])
+    #         key = int(tri[2])
+    #         iconinfo[key] = {u"Name":tri[0],u'Symbol':tri[1],u"Website":tri[3].strip()}
+
 
 
     urls = ["https://www.icon.foundation/"]
 
     sc = SimpleCrawler()
     for k,v in iconinfo.items():
-        u = v[u"Website"]
+        u = v[u"website"]
         extracted = sc.get_info_by_url( u )
         v[u"extracted"] = extracted
     outputfile = "output/amendment" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S')+ ".json"
