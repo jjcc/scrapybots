@@ -24,6 +24,17 @@ class CryptoSpider(scrapy.Spider):
             'generalbot.pipelines.CryptobotPipeline': 300,
         }
     }
+    start_crypto = None
+    end_crypto = None
+
+    def __init__(self, arg=None):
+        if arg:
+            start_end = arg.split(",")
+            self.start_crypto = int(start_end[0])
+            if len(start_end) > 1:
+                self.end_crypto = int(start_end[1])
+        else:
+            print("No arg")
 
     def start_requests(self):
         for u in self.start_urls:
