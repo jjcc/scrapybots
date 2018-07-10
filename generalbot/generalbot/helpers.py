@@ -47,6 +47,8 @@ class CryptoHelper(object):
             if 'wechat' in address:
                 spider.data[rank]['extrainfo']['wechat'] = address
                 #print("wechat: %s"%address)
+            if 'github' in address:
+                spider.data[rank]['extrainfo']['github'] = address
             if 'youtu' in address:
                 spider.data[rank]['extrainfo']['youtube'] = address
                 #print("wechat: %s"%address)
