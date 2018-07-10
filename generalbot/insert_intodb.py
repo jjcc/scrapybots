@@ -1,9 +1,4 @@
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
 import re
 import datetime
 import time
@@ -36,7 +31,11 @@ def process(file,file_amendment):
        crypto = Topic(name = c['Name'])
        crypto.symbol = c['Symbol']
        crypto.web = c['Website']
-       crypto.github = c['Source Code']
+       if 'Source Code' in c:
+           crypto.github = c['Source Code']
+       else:
+           print("No source code for %s"%c['Name'])
+       crypto.marketcap = 0
        chat1 = ''
        chat2 = ''
        if 'Chat' in c:
@@ -59,17 +58,17 @@ def process(file,file_amendment):
                #pass #print "\t",extrainfo["reddit"]
                for info in extrainfo:
                    if 'reddit' in info:
-                       crypto.reddit = info['reddit']
+                       crypto.reddit = extrainfo['reddit']
                    if 'telegram' in info:
-                       crypto.telegram = info['reddit']
+                       crypto.telegram = extrainfo['telegram']
                    if 'discord' in info:
-                       crypto.discord = info['reddit']
+                       crypto.discord = extrainfo['discord']
                    if 'linkedin' in info:
-                       crypto.linkedin = info['linkedin']
+                       crypto.linkedin = extrainfo['linkedin']
                    if 'facebook' in info:
-                       crypto.facebook = info['facebook']
+                       crypto.facebook = extrainfo['facebook']
                    if 'twitter' in info:
-                       crypto.twitter = info['twitter']
+                       crypto.twitter = extrainfo['twitter']
                use_amendment = 0
            else:
                seq = ( coininfo['Name'],coininfo["Symbol"],"%d"%rank,coininfo['Website'] )
@@ -85,20 +84,20 @@ def process(file,file_amendment):
             extrainfo = amendmend['extracted']
             for info in extrainfo:
                 if 'reddit' in info:
-                   crypto.reddit = info['reddit']
+                   crypto.reddit = extrainfo['reddit']
                 if 'telegram' in info:
-                   crypto.telegram = info['reddit']
+                   crypto.telegram = extrainfo['telegram']
                 if 'discord' in info:
-                   crypto.discord = info['reddit']
+                   crypto.discord = extrainfo['discord']
                 if 'linkedin' in info:
-                   crypto.linkedin = info['linkedin']
+                   crypto.linkedin = extrainfo['linkedin']
                 if 'facebook' in info:
-                   crypto.facebook = info['facebook']
+                   crypto.facebook = extrainfo['facebook']
                 if 'twitter' in info:
-                   crypto.twitter = info['twitter']
+                   crypto.twitter = extrainfo['twitter']
 
-       session.add(crypto)
-       session.commit()
+       #session.add(crypto)
+       #session.commit()
 
     return coininfo_filtered
 
