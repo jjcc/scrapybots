@@ -69,6 +69,8 @@ def process(file,file_amendment):
                        crypto.facebook = extrainfo['facebook']
                    if 'twitter' in info:
                        crypto.twitter = extrainfo['twitter']
+                   if crypto.github == None and 'github' in info:
+                       crypto.github = extrainfo['github']
                use_amendment = 0
            else:
                seq = ( coininfo['Name'],coininfo["Symbol"],"%d"%rank,coininfo['Website'] )
@@ -78,27 +80,28 @@ def process(file,file_amendment):
            print (",".join((coininfo['Name'],coininfo["Symbol"],r"%d"%rank,coininfo['Website'],"*")))
            noextra = 1
        key = '%s'%rank
+       print(key)
        coininfo_filtered[key] = {u"name": coininfo['Name'], u'symbol':coininfo['Symbol'],u'website':coininfo['Website']}#,u'noextra':noextra }
        if use_amendment == 1:
-            amendmend = data_a[key]
-            extrainfo = amendmend['extracted']
-            for info in extrainfo:
-                if 'reddit' in info:
-                   crypto.reddit = extrainfo['reddit']
-                if 'telegram' in info:
-                   crypto.telegram = extrainfo['telegram']
-                if 'discord' in info:
-                   crypto.discord = extrainfo['discord']
-                if 'linkedin' in info:
-                   crypto.linkedin = extrainfo['linkedin']
-                if 'facebook' in info:
-                   crypto.facebook = extrainfo['facebook']
-                if 'twitter' in info:
-                   crypto.twitter = extrainfo['twitter']
-
-       #session.add(crypto)
-       #session.commit()
-
+           amendmend = data_a[key]
+           extrainfo = amendmend['extracted']
+           for info in extrainfo:
+               if 'reddit' in info:
+                  crypto.reddit = extrainfo['reddit']
+               if 'telegram' in info:
+                  crypto.telegram = extrainfo['telegram']
+               if 'discord' in info:
+                  crypto.discord = extrainfo['discord']
+               if 'linkedin' in info:
+                  crypto.linkedin = extrainfo['linkedin']
+               if 'facebook' in info:
+                  crypto.facebook = extrainfo['facebook']
+               if 'twitter' in info:
+                  crypto.twitter = extrainfo['twitter']
+       session.add(crypto)
+       session.commit()
+       #pass
+       print("key again%s"%key)
     return coininfo_filtered
 
 #if __name__ == '__main__':
@@ -114,7 +117,3 @@ if __name__ == "__main__":
 
 
 
-
-
-    for k,v in mis_info.items():
-        print(k)
