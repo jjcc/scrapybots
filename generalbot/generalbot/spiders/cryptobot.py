@@ -26,6 +26,7 @@ class CryptoSpider(scrapy.Spider):
     }
     start_crypto = None
     end_crypto = None
+    count_crypto = 0
 
     def __init__(self, arg=None):
         if arg:
@@ -53,8 +54,17 @@ class CryptoSpider(scrapy.Spider):
         items = []
         sel = Selector(response)
         sites = sel.css('.currency-name-container')#[0:5]
-
+        parse_count = 0
         for path in sites.css('a::attr(href)').extract(): #sites.xpath('//a/@href').extract():
+            if self.start_crypto:
+                if parse_count < self.start_crypto:
+                    parse_count += 1
+                    continue
+            if self.end_crypto:
+                if parse_count >= self.end_crypto:
+                    break
+            parse_count += 1
+            info("parse count:%s"%parse_count)
             coinurl = url + path
             yield scrapy.Request(coinurl, callback=self.parse_coin)
 
