@@ -82,7 +82,7 @@ def calculate0(list):
     # print "meta:%s"%".".join(meta)
     # dtdelta = dt2 - dt1
     # dtdelta.total_seconds()
-    return (sum_delta, sum_comments, count, meta[1], meta[0],dt_deltas,comments,votes)
+    return (sum_delta, sum_comments, count, meta[1], meta[0],dt_deltas,comments,votes,meta)
 
 
 if __name__ == '__main__':

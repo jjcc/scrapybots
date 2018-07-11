@@ -20,6 +20,8 @@ class RedditbotPipeline(object):
         info(">>>RedditBotPipeline Starting")
 
     def process_item(self, item, spider):
+        if 'topicid' in item['item']:
+            item['item']['topicid'] = str(item['item']['topicid'])
         line =  [ item['item'][v] for v in item['item']]
         l = ",".join(line) +'\n'#json.dumps(OrderedDict(item), ensure_ascii=False, sort_keys=False) + "\n"
         ll = item['url'] + "," + l
@@ -66,6 +68,8 @@ class RedditbotPipeline(object):
             timinginfo = metrices[5]
             commentinfo = metrices[6]
             voteinfo = metrices[7]
+            meta = metrices[8]
+            topic_id = meta[3]
             print("better data")
             info = [timinginfo, commentinfo, voteinfo]
             strinfo = ['timing', 'comment', 'vote']
@@ -84,7 +88,7 @@ class RedditbotPipeline(object):
                     reddit.vote_mean = df.mean()
                     reddit.vote_std = df.std()
                 count += 1
-
+            reddit.topic_id = topic_id
             session.add(reddit)
             session.commit()
             # df.mean()
