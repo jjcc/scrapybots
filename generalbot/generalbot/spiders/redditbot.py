@@ -5,17 +5,28 @@ import re
 from generalbot.items import *
 import datetime
 
+from sqlalchemy import create_engine
+from misc.dbcreate import Base
+from sqlalchemy.orm import *
+
+
 class RedditSpider(scrapy.Spider):
     # spider name
     name = 'redditbot'
     # list of allowed domains
     allowed_domains = ['www.reddit.com']
     # staring url for scraping
-    start_urls = ['https://www.reddit.com/r/Nootropics/',
-                  'https://www.reddit.com/r/eos/']
+    start_urls = [{'url':'https://www.reddit.com/r/Nootropics/','id' :1},
+                  {'url':'https://www.reddit.com/r/eos/','id':2}]
 
     #for url in open("/path_to/urls.txt"):
     #    start_urls.append(url)
+    engine = create_engine('sqlite:///bigdata.db')
+    # Bind the engine to the metadata of the Base class so that the
+    # declaratives can be accessed through a DBSession instance
+    Base.metadata.bind = engine
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
 
     # location of csv file
     custom_settings = {
@@ -27,9 +38,10 @@ class RedditSpider(scrapy.Spider):
 
     def start_requests(self):
         for u in self.start_urls:
-            yield scrapy.Request(u, callback=self.parse,
+            yield scrapy.Request(u['url'], callback=self.parse,
                                     errback=self.errback_httpbin,
-                                    dont_filter=True)
+                                    dont_filter=True,
+                                    meta = {'tid': u['id']})
 
 
     def parse(self, response):
@@ -100,7 +112,7 @@ class RedditSpider(scrapy.Spider):
         subredditInfo['subscribers'] = subscribers_alt
         subredditInfo['users'] = onlineusers_alt
         subredditInfo['subreddit'] = "xxx"  # posts
-
+        subredditInfo['topicid'] = response.meta['tid']
         yield {'url':url, 'item':subredditInfo}
 
 
