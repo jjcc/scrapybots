@@ -22,4 +22,5 @@ class RedditItem(scrapy.Item):
     subreddit = scrapy.Field()
     subscribers = scrapy.Field()
     users = scrapy.Field()
+    topicid = scrapy.Field()
     pass
