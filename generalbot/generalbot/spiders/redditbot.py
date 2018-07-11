@@ -9,6 +9,7 @@ from sqlalchemy import create_engine
 from misc.dbcreate import Base
 from sqlalchemy.orm import *
 
+from misc.dbcreate import Topic
 
 class RedditSpider(scrapy.Spider):
     # spider name
@@ -37,11 +38,17 @@ class RedditSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        for u in self.start_urls:
-            yield scrapy.Request(u['url'], callback=self.parse,
+        cryptos =self.session.query(Topic).all()
+        #for u in self.start_urls:
+        for u in cryptos:
+            if u.reddit:
+                info("requesting:%s, id:%d, symbol:%s"%(u.reddit, u.id, u.symbol))
+                if not "http" in u.reddit:
+                    u.reddit = "https:" + u.reddit
+                yield scrapy.Request(u.reddit, callback=self.parse,
                                     errback=self.errback_httpbin,
                                     dont_filter=True,
-                                    meta = {'tid': u['id']})
+                                    meta = {'tid': u.id})
 
 
     def parse(self, response):
@@ -50,13 +57,13 @@ class RedditSpider(scrapy.Spider):
         reqinfo = {}
         reqinfo['mark'] = "IIIIII"
         reqinfo['url'] = url
-        response_text = response.text
-        topic = url.split('/')[-2]
-        #if topic == "":
-        #    topic
-        fn =  "output/" + topic + "_" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + "_response.html"
-        with open(fn, "w",encoding='utf-8') as fout:
-            fout.write(response_text)
+
+        #For debug purpose
+        #response_text = response.text
+        #topic = url.split('/')[-2]
+        #fn =  "output/" + topic + "_" + datetime.datetime.now().strftime('%Y%m%d_%H%M%S') + "_response.html"
+        #with open(fn, "w",encoding='utf-8') as fout:
+        #    fout.write(response_text)
 
         #yield reqinfo
         # Extracting the content using css selectors(earlier logic)
