@@ -6,6 +6,7 @@ from scrapy.selector import Selector
 from datetime import datetime
 from generalbot.items import *
 from generalbot.helpers import CryptoHelper
+from bs4 import BeautifulSoup
 
 class CryptoSpider(scrapy.Spider):
     # spider name
@@ -71,6 +72,7 @@ class CryptoSpider(scrapy.Spider):
 
 
     def parse_coin(self,response):
+        soup = BeautifulSoup(response.text, 'lxml')
         urlgroup = response.css('.list-unstyled')[0]
         name = response.css('.details-panel-item--name::text').extract()[1].strip()
         symbol = response.css('.text-large::text').extract()[0].replace('(','').replace(')','')
@@ -98,6 +100,17 @@ class CryptoSpider(scrapy.Spider):
         info[u'Date'] = datetime.now().strftime("%Y-%m-%d")
         for i, key in  enumerate(keys):
             info[key] = urls[i]
+
+        #get reddit in "social" section in case reddit is missing
+        scrip_seg = soup.findAll('script')
+        with_reddit = [a.text for a in scrip_seg if 'reddit' in a.text]
+        if len(with_reddit) > 0:
+            contains_reddit = with_reddit[0]
+
+            match = re.search(r"reddit.com/r/\w+", contains_reddit)
+            if match:
+                post = match.string[match.start():match.end()]
+                info[u'Reddit0'] = "https://" + post
 
         if u'Website' in info:
             weburl = info[u'Website']

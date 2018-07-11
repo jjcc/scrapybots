@@ -98,6 +98,12 @@ def process(file,file_amendment):
                   crypto.facebook = extrainfo['facebook']
                if 'twitter' in info:
                   crypto.twitter = extrainfo['twitter']
+               if crypto.github == None and 'github' in info:
+                  crypto.github = extrainfo['github']
+
+
+       if crypto.reddit == None and 'Reddit0' in  c:
+            crypto.reddit = c['Reddit0']
        session.add(crypto)
        session.commit()
        #pass
