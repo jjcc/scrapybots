@@ -186,7 +186,7 @@ class GeneralbotSpiderMiddlewarePostReddit(object):
             if type(r) is dict:
                 i = r['item']
                 itemInfo = i['title'] if ( type(i) is GeneralbotItem and  'title' in i) else "xxx"+ i['subscribers']
-                self.log(itemInfo, logging.INFO)
+                #self.log(itemInfo, logging.INFO)
             else:
                 self.log("r is not dict but Request", logging.INFO)
             pass
