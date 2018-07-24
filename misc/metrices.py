@@ -37,7 +37,12 @@ def calculate( itemlist):
 
 def calculate0(list):
     metainfo = None
+#    count = 0
+#    if len(list) > 25:
+#        print("Stop here")
     for d in list:
+#        if count == 25:
+#            print("stop here")
         if not 'created_at' in d.keys():
             metainfo = d
             list.remove(d)
@@ -45,7 +50,11 @@ def calculate0(list):
         d['created_at'] = dparser.parse(d['created_at'])
         vote = 0 if d['vote'] == u'\u2022' else d['vote']
         # print vote ,d['created_at']
+#        count += 1
     list0 = list
+#    for l in list:
+#        if isinstance(l['created_at'], str):
+#            print("stop here")
     list_s = list.sort(key=lambda item: item['created_at'], reverse=True)
     count = 0
     dt_deltas = [0] #date delta list
