@@ -4,6 +4,20 @@ import pandas as pd
 
 
 from pymarketcap import Pymarketcap
+import asyncio
+from pymarketcap import AsyncPymarketcap
+
+async def getdetail(mylist):
+    count  = 0
+    #mylist = ['BTC',"ETH","XRP",'BCH','EOS','XLM','LTC','ADA','USDT','MIOTA']
+    async with AsyncPymarketcap() as apym:
+        async for currency in apym.every_currency(mylist):
+            if count > 100:
+                break
+            print(currency)
+            print(",")
+            count +=1
+
 
 def main():
     cmc = Pymarketcap()
@@ -43,9 +57,15 @@ def main():
         subtotal += v['per']
         print('per:' + str(v['per']) + ",assumulate:" + str(subtotal))
 
+    symbols = df["symbol"].tolist()
 
-    print(df.head())
-    print(df.tail())
+    loop = asyncio.get_event_loop()
+    #mylist = ['BTC', "ETH", "XRP", 'BCH', 'EOS', 'XLM', 'LTC', 'ADA', 'USDT', 'MIOTA']
+    print('[\n')
+    loop.run_until_complete(getdetail(symbols))
+    print('\n]')
+    # print(df.head())
+    # print(df.tail())
     #for c in currencies:
 
 
