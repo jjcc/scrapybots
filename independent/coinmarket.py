@@ -36,6 +36,13 @@ def main():
             datain.append(row)
 
     df = pd.DataFrame(datain)
+    df["per"] = df['market_cap'] * 100 / df['market_cap'].sum()
+    #subtotal
+    subtotal = 0
+    for k, v in df.iterrows():
+        subtotal += v['per']
+        print('per:' + str(v['per']) + ",assumulate:" + str(subtotal))
+
 
     print(df.head())
     print(df.tail())
