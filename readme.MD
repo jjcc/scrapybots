@@ -1,1 +1,1 @@
-* if use Conda, "pyopenssl" and "cryptography" needs to be uninstall and install using pip
+* if use Conda, "pyopenssl" , "cryptography" and "lxml" needs to be uninstall and install using pip
