@@ -67,6 +67,7 @@ class CoinBasic(Base):
 class CoinDaily(Base):
     __tablename__ = 'coin_daily'
     id = Column(Integer, primary_key=True)
+    coinid = Column(Integer)
     rank = Column(Integer)
     circulating_supply = Column(Float)
     total_supply = Column(Float)
