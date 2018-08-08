@@ -6,9 +6,9 @@ from pymarketcap import AsyncPymarketcap
 
 #count = 0
 
-async def main():
+async def mainloop(mylist):
     count  = 0
-    mylist = ['BTC',"ETH","XRP",'BCH','EOS','XLM','LTC','ADA','USDT','MIOTA']
+    #mylist = ['BTC',"ETH","XRP",'BCH','EOS','XLM','LTC','ADA','USDT','MIOTA']
     async with AsyncPymarketcap() as apym:
         async for currency in apym.every_currency(mylist):
             if count > 100:
@@ -19,6 +19,7 @@ async def main():
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
+    mylist = ['BTC', "ETH", "XRP", 'BCH', 'EOS', 'XLM', 'LTC', 'ADA', 'USDT', 'MIOTA']
     print('[\n')
-    loop.run_until_complete(main())
+    loop.run_until_complete(mainloop(mylist))
     print('\n]')
