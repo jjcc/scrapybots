@@ -75,11 +75,21 @@ async def getdetail(mylist):
         async for currency in apym.every_currency(mylist):
             if count > 100:
                 break
-            print(currency)
-            print(",")
+            #print(currency)
+            #print(",")
             count +=1
             detail.append(currency)
     return detail
+
+def detailresult(mylist):
+    #Basic information, need to get details
+    loop = asyncio.get_event_loop()
+    #mylist = ['BTC', "ETH", "XRP", 'BCH', 'EOS', 'XLM', 'LTC', 'ADA', 'USDT', 'MIOTA']
+    print('[\n')
+    #all = loop.run_until_complete(getdetail(symbols))
+    #all = loop.run_until_complete(getdetail(names))
+    all = loop.run_until_complete(getdetail(mylist))
+    return all
 
 def main():
     INCLUDE_BASIC = True
@@ -121,42 +131,33 @@ def main():
     subtotal = 0
     for k, v in df.iterrows():
         subtotal += v['per']
-        print('per:' + str(v['per']) + ",assumulate:" + str(subtotal))
+        #print('per:' + str(v['per']) + ",assumulate:" + str(subtotal))
 
     symbols = df["symbol"].tolist()
     #symbols is not good now. Use name instead
     names = []
+    ids = []
     #with some cheating: for special cases use symbols
+
     for id, info in data.items():
-        if info['name'] == 'IOTA':
-            info['name'] = 'MIOTA'
-        if info['name'] == 'TRON':
-            info['name'] = 'TRX'
-        if info['name'] == 'NEM':
-            info['name'] = 'XEM'
-        if info['name'] == 'ODEM':
-            info['name'] = 'ODE'
-        if info['name'] == 'ICON':
-            info['name'] = 'ICX'
-        names.append(info['name'])
+        # special = {'IOTA’：‘MIOTA','TRON':'TRX','NEM':'XEM','ODEM':'ODE','ICON':'ICX'}
+        # if info['name'] in ['IOTA','TRON','NEM','ODEM','ICON']:
+        #    info['name'] = special[info['name']]
+        #names.append(info['name'])
+        ids.append(info['id'])
 
 
     if not INCLUDE_BASIC:
         return
 
-    #Basic information, need to get details
-    loop = asyncio.get_event_loop()
-    #mylist = ['BTC', "ETH", "XRP", 'BCH', 'EOS', 'XLM', 'LTC', 'ADA', 'USDT', 'MIOTA']
-    print('[\n')
-    #all = loop.run_until_complete(getdetail(symbols))
-    all = loop.run_until_complete(getdetail(names))
+    all = detailresult(ids)
 
-
-    print('\n]')
     # print(df.head())
     # print(df.tail())
     #for c in currencies:
+
     all.sort(key = lambda a: a['rank'])
+
     #Now, play with all:
     #[i['source_code'] if i['source_code'] is not None else "##NONE###" for i in all]
     # return source code list
@@ -217,9 +218,14 @@ def main():
             if k in ['webs', 'explorers', 'message_boards', 'chats']:
                 vin = ",".join(v)
                 record[k] = vin
-            elif k in ['source_code','mineable', 'announcement','id','name','symbol']:
+            elif k in ['source_code','mineable', 'announcement','id','name','symbol','website_slug']:
                 record[k] = v
+
+        dbids = [id[0] for id in  session.query(CoinBasic.id).all()]
+
         #Good, now insert into DB
+
+
         crypto = CoinBasic()
         #Go through each column
         for k,v in record.items():
@@ -227,8 +233,11 @@ def main():
                 setattr(crypto, k, v)
                 pass
         #insert a record
-        session.add(crypto)
-        session.commit()
+        if crypto.id in dbids:
+            pass
+        else:
+            session.add(crypto)
+            session.commit()
         pass
  #       for k, v in detail.items():
 
