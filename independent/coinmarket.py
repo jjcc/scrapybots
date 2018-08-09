@@ -124,7 +124,21 @@ def main():
         print('per:' + str(v['per']) + ",assumulate:" + str(subtotal))
 
     symbols = df["symbol"].tolist()
-
+    #symbols is not good now. Use name instead
+    names = []
+    #with some cheating: for special cases use symbols
+    for id, info in data.items():
+        if info['name'] == 'IOTA':
+            info['name'] = 'MIOTA'
+        if info['name'] == 'TRON':
+            info['name'] = 'TRX'
+        if info['name'] == 'NEM':
+            info['name'] = 'XEM'
+        if info['name'] == 'ODEM':
+            info['name'] = 'ODE'
+        if info['name'] == 'ICON':
+            info['name'] = 'ICX'
+        names.append(info['name'])
 
 
     if not INCLUDE_BASIC:
@@ -134,7 +148,10 @@ def main():
     loop = asyncio.get_event_loop()
     #mylist = ['BTC', "ETH", "XRP", 'BCH', 'EOS', 'XLM', 'LTC', 'ADA', 'USDT', 'MIOTA']
     print('[\n')
-    all = loop.run_until_complete(getdetail(symbols))
+    #all = loop.run_until_complete(getdetail(symbols))
+    all = loop.run_until_complete(getdetail(names))
+
+
     print('\n]')
     # print(df.head())
     # print(df.tail())
@@ -183,21 +200,29 @@ def main():
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
 
-    for index, row in enumerate(datain):
-        assert (row['id'] == all[index]['id'])
+    for index, detail in enumerate(all):
+        id = detail['id']
+        if str(id) in data:
+            datainfo = data[str(id)]
+        else:
+            print(str(id))
+
+    #for index, row in enumerate(datain):
+    #    assert (row['id'] == all[index]['id'])
         #TODO: assert failed at 42
-        id  = row['id']
-        detail = all[index]
+    #    id  = row['id']
+    #    detail = all[index]
+        record = {}
         for k,v in detail.items():
             if k in ['webs', 'explorers', 'message_boards', 'chats']:
                 vin = ",".join(v)
-                row[k] = vin
-            elif k in ['source_code','mineable', 'announcement']:
-                row[k] = vin
+                record[k] = vin
+            elif k in ['source_code','mineable', 'announcement','id','name','symbol']:
+                record[k] = v
         #Good, now insert into DB
         crypto = CoinBasic()
         #Go through each column
-        for k,v in row.items():
+        for k,v in record.items():
             if k in ["id","name","symbol","website_slug","webs","explorers","message_boards","chats","source_code","mineable","announcement"]:
                 setattr(crypto, k, v)
                 pass
