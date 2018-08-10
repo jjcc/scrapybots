@@ -8,7 +8,8 @@ from sqlalchemy.orm import *
 from pymarketcap import Pymarketcap
 import asyncio
 from pymarketcap import AsyncPymarketcap
-
+import datetime
+import json
 
 from misc.dbcreate import CoinBasic
 '''
@@ -97,13 +98,25 @@ def detailresult(mylist):
     return all
 
 def save_coin():
+    '''
+    save coin information
+    :return:
+    '''
 
-    INCLUDE_BASIC = True
+    INCLUDE_BASIC = False
     cmc = Pymarketcap()
     # Get scrapedinfo currencies ranked by volume
     currencies = cmc.ticker()
     num = currencies['metadata']['num_cryptocurrencies']
     data = currencies['data']
+
+    #save list data to a file
+    save_file(data)
+
+    if not INCLUDE_BASIC:
+        return
+
+
     #symbols is not good now. Use name instead
     names = []
     ids = []
@@ -114,12 +127,6 @@ def save_coin():
         #    info['name'] = special[info['name']]
         #names.append(info['name'])
         ids.append(info['id'])
-
-    #save list data to a file
-    save_file(data)
-
-    if not INCLUDE_BASIC:
-        return
 
     #use scrap to get more details
     scrapedinfo = detailresult(ids)
@@ -206,7 +213,9 @@ def save_coin():
 
 
 def save_file(data):
-    file = "marketcap.csv"
+    dateinfo = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    file = "data/%s_smarketcap.csv"%dateinfo
+    filejson = "data/%s_smarketcap.json"%dateinfo
     datain = []
     with open(file, 'w') as outfile:
         line = "id,name,symbol,website_slug,rank,circulating,total,max,price,vaolume_24h,market,percent_change_1h,percent_change_24h,percent_change_7d,last_update\n"
@@ -229,6 +238,25 @@ def save_file(data):
                         row[q] = qv
             outfile.write(line + "\n")
             datain.append(row)
+
+    datasimple = {}
+    for id, info in data.items():
+        infosimple = {}
+        for key, value in info.items():
+            if key == "quotes":
+                quote = value["USD"]
+                for q, qv in quote.items():
+                    line = line + str(qv) + ","
+                    infosimple[q] = qv
+            else:
+                if key in ['symbol','name','rank','id']:
+                    infosimple[key] = value
+        datasimple[id] = infosimple
+
+
+    with open(filejson, 'w') as outfile2:
+        json.dump(datasimple,outfile2)
+
     df = pd.DataFrame(datain)
     df["per"] = df['market_cap'] * 100 / df['market_cap'].sum()
     # subtotal
