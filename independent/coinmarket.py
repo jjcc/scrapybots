@@ -68,6 +68,11 @@ def process(file,file_amendment):
 
 
 async def getdetail(mylist):
+    """
+    asynchronized process to get detail information about a list of coins
+    :param mylist: list of ids (or symbols,names but not relialbe
+    :return: the scraped coin info
+    """
     count  = 0
     detail = []
     #mylist = ['BTC',"ETH","XRP",'BCH','EOS','XLM','LTC','ADA','USDT','MIOTA']
@@ -82,63 +87,27 @@ async def getdetail(mylist):
     return detail
 
 def detailresult(mylist):
-    #Basic information, need to get details
+    '''
+    call the async method getdetail to get all results
+    :param mylist:
+    :return:
+    '''
     loop = asyncio.get_event_loop()
-    #mylist = ['BTC', "ETH", "XRP", 'BCH', 'EOS', 'XLM', 'LTC', 'ADA', 'USDT', 'MIOTA']
-    print('[\n')
-    #all = loop.run_until_complete(getdetail(symbols))
-    #all = loop.run_until_complete(getdetail(names))
     all = loop.run_until_complete(getdetail(mylist))
     return all
 
-def main():
+def save_coin():
+
     INCLUDE_BASIC = True
-
     cmc = Pymarketcap()
-
-    # Get all currencies ranked by volume
+    # Get scrapedinfo currencies ranked by volume
     currencies = cmc.ticker()
     num = currencies['metadata']['num_cryptocurrencies']
     data = currencies['data']
-
-    file = "marketcap.csv"
-    datain = []
-    with open(file, 'w') as outfile:
-        line = "id,name,symbol,website_slug,rank,circulating,total,max,price,vaolume_24h,market,percent_change_1h,percent_change_24h,percent_change_7d,last_update\n"
-        outfile.write(line)
-        for id, info in data.items():
-            # for pd
-            row = {}
-            print("###%s"%info['symbol'])
-            line = ""
-            for key,value in info.items():
-                if key != "quotes":
-                    #print("%s:%s"%(key, value))
-                    line = line + str(value) +  ","
-                    row[key] = value
-                else:
-                    #print("market:%s"%value["USD"]["market_cap"])
-                    quote = value["USD"]
-                    for q, qv in quote.items():
-                        line = line + str(qv) + ","
-                        row[q] = qv
-            outfile.write(line + "\n")
-            datain.append(row)
-
-    df = pd.DataFrame(datain)
-    df["per"] = df['market_cap'] * 100 / df['market_cap'].sum()
-    #subtotal
-    subtotal = 0
-    for k, v in df.iterrows():
-        subtotal += v['per']
-        #print('per:' + str(v['per']) + ",assumulate:" + str(subtotal))
-
-    symbols = df["symbol"].tolist()
     #symbols is not good now. Use name instead
     names = []
     ids = []
     #with some cheating: for special cases use symbols
-
     for id, info in data.items():
         # special = {'IOTA’：‘MIOTA','TRON':'TRX','NEM':'XEM','ODEM':'ODE','ICON':'ICX'}
         # if info['name'] in ['IOTA','TRON','NEM','ODEM','ICON']:
@@ -146,20 +115,19 @@ def main():
         #names.append(info['name'])
         ids.append(info['id'])
 
+    #save list data to a file
+    save_file(data)
 
     if not INCLUDE_BASIC:
         return
 
-    all = detailresult(ids)
+    #use scrap to get more details
+    scrapedinfo = detailresult(ids)
 
-    # print(df.head())
-    # print(df.tail())
-    #for c in currencies:
+    scrapedinfo.sort(key = lambda a: a['rank'])
 
-    all.sort(key = lambda a: a['rank'])
-
-    #Now, play with all:
-    #[i['source_code'] if i['source_code'] is not None else "##NONE###" for i in all]
+    #Now, play with scrapedinfo:
+    #[i['source_code'] if i['source_code'] is not None else "##NONE###" for i in scrapedinfo]
     # return source code list
     # ['https://github.com/bitcoin/',
     #  'https://github.com/ethereum',
@@ -173,7 +141,7 @@ def main():
     #  'https://github.com/iotaledger',
     #  .....
 
-    #[i['chats'][0] if len(i['chats']) > 0 else "##NONE###" for i in all]
+    #[i['chats'][0] if len(i['chats']) > 0 else "##NONE###" for i in scrapedinfo]
     # return chat list, slack,gitter,telegram,slack,discord
     # ['##NONE###',
     #  'https://gitter.im/orgs/ethereum/rooms',
@@ -191,9 +159,6 @@ def main():
     #  '##NONE###',
     # ...
 
-
-    #join the array items: webs, chats, explorers,message_boards
-
     engine = create_engine('sqlite:///bigdata2.db')
     # Bind the engine to the metadata of the Base class so that the
     # declaratives can be accessed through a DBSession instance
@@ -201,7 +166,7 @@ def main():
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
 
-    for index, detail in enumerate(all):
+    for index, detail in enumerate(scrapedinfo):
         id = detail['id']
         if str(id) in data:
             datainfo = data[str(id)]
@@ -209,10 +174,8 @@ def main():
             print(str(id))
 
     #for index, row in enumerate(datain):
-    #    assert (row['id'] == all[index]['id'])
+        #assert (row['id'] == scrapedinfo[index]['id'])
         #TODO: assert failed at 42
-    #    id  = row['id']
-    #    detail = all[index]
         record = {}
         for k,v in detail.items():
             if k in ['webs', 'explorers', 'message_boards', 'chats']:
@@ -220,32 +183,61 @@ def main():
                 record[k] = vin
             elif k in ['source_code','mineable', 'announcement','id','name','symbol','website_slug']:
                 record[k] = v
-
+        #get existing ids from DB so there will be no conflicts
         dbids = [id[0] for id in  session.query(CoinBasic.id).all()]
-
-        #Good, now insert into DB
-
 
         crypto = CoinBasic()
         #Go through each column
         for k,v in record.items():
             if k in ["id","name","symbol","website_slug","webs","explorers","message_boards","chats","source_code","mineable","announcement"]:
                 setattr(crypto, k, v)
-                pass
+
         #insert a record
         if crypto.id in dbids:
-            pass
+            pass #skip if exists, maybe update in future
         else:
             session.add(crypto)
             session.commit()
         pass
- #       for k, v in detail.items():
 
 
 
     print(currencies)
 
 
+def save_file(data):
+    file = "marketcap.csv"
+    datain = []
+    with open(file, 'w') as outfile:
+        line = "id,name,symbol,website_slug,rank,circulating,total,max,price,vaolume_24h,market,percent_change_1h,percent_change_24h,percent_change_7d,last_update\n"
+        outfile.write(line)
+        for id, info in data.items():
+            # for pd
+            row = {}
+            # print("###%s"%info['symbol'])
+            line = ""
+            for key, value in info.items():
+                if key != "quotes":
+                    # print("%s:%s"%(key, value))
+                    line = line + str(value) + ","
+                    row[key] = value
+                else:
+                    # print("market:%s"%value["USD"]["market_cap"])
+                    quote = value["USD"]
+                    for q, qv in quote.items():
+                        line = line + str(qv) + ","
+                        row[q] = qv
+            outfile.write(line + "\n")
+            datain.append(row)
+    df = pd.DataFrame(datain)
+    df["per"] = df['market_cap'] * 100 / df['market_cap'].sum()
+    # subtotal
+    subtotal = 0
+    for k, v in df.iterrows():
+        subtotal += v['per']
+        # print('per:' + str(v['per']) + ",assumulate:" + str(subtotal))
+    symbols = df["symbol"].tolist()
+
 
 if __name__ == "__main__":
-    main()
+    save_coin()
