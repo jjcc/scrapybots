@@ -63,6 +63,12 @@ class CoinBasic(Base):
     source_code = Column(String(100))
     mineable = Column(String(100))
     announcement = Column(String(100))
+    reddit = Column(String(100))
+    twitter = Column(String(100))
+    facebook = Column(String(100))
+    linkedin = Column(String(100))
+    wechat = Column(String(100))
+    youtube = Column(String(100))
 
 class CoinDaily(Base):
     __tablename__ = 'coin_daily'
