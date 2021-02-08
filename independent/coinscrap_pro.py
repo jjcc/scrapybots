@@ -1,40 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-#
-#import asyncio
-#from pymarketcap import AsyncPymarketcap
-#
-##count = 0
-#
-#async def main():
-#    count  = 0
-#    mylist = ['BTC',"ETH","XRP",'BCH','EOS','XLM','LTC','ADA','USDT','MIOTA']
-#    async with AsyncPymarketcap() as apym:
-#        async for currency in apym.every_currency(mylist):
-#            if count > 100:
-#                break
-#            print(currency)
-#            print(",")
-#            count +=1
-#
-#if __name__ == '__main__':
-#    loop = asyncio.get_event_loop()
-#    print('[\n')
-#    loop.run_until_complete(main())
-#    print('\n]')
-#
+
 from requests import Request, Session
 from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 headers = {
   'Accepts': 'application/json',
-  'X-CMC_PRO_API_KEY': 'f002af2a-3a0e-4d6f-860c-6a508130c647',
 }
+
 base_url = 'https://pro-api.coinmarketcap.com/v1/'
 base_parameters = {
   'start':'1',
-  'limit':'99',
+  'limit':'499',
 }
 
 api_list = {
@@ -49,6 +30,7 @@ api_list = {
     },
 }
 
+headers['X-CMC_PRO_API_KEY'] = os.getenv('API_KEY')
 session = Session()
 session.headers.update(headers)
 
