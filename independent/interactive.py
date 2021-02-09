@@ -25,30 +25,54 @@ def get_mapinfo():
     return df_info0
 
 
+regexes= {'supply':r'has a current supply of ([\d|,|.]+)',
+           'price':r'is\s*([\d|,|.]+)\s*USD',
+           'change':r'([\d|,|.|-]+)\s*over the', 
+           'volumn':r'([\d|,|.]+)\s*traded',
+           'market':r'(\d+)\s*active' }
+
+def get_num(desc, k) :
+    res = re.search(regexes[k],desc)
+    return res.group(1)
+
+
+url_keys = ['website', 'twitter', 'message_board', 'chat', 'explorer', 'reddit', 'technical_doc', 'source_code', 'announcement']
 
 def output():
     df_map = get_mapinfo()
     df_info = get_metainfo()
     
     pdm = pd.merge(df_map,df_info,on=['id','symbol'])
-    pdm.to_csv('data\\merge_info.csv',index=False)
 
-desc = 'Mirrored Invesco QQQ Trust (mQQQ) is a cryptocurrency and operates on the Ethereum platform. Mirrored Invesco QQQ Trust has a current supply of 13,986.610708. The last known price of Mirrored Invesco QQQ Trust is 380.57680721 USD and is down -2.73 over the last 24 hours. It is currently trading on 2 active market(s) with $163,101.15 traded over the last 24 hours. More information can be found at https://mirror.finance. '
+    for k in regexes.keys():
+        pdm[k] = 0
 
-regexes= {'supply':r'has a current supply of ([\d|,|.]+)',
-           'price':r'is\s*([\d|,|.]+)\s*USD',
-           'change':r'([\d|,|.]+)\s*over the', 
-           'volumn':r'([\d|,|.]+)\s*traded' }
-def get_num(desc, k) :
-    res = re.search(regexes[k],desc)
-    return res.group(1)
+    for k in url_keys:
+        pdm[k] = ''
 
-for k,v in regexes.items():
-    print(get_num(desc,k))
+    for index, row in pdm.iterrows():
+        desc = row['description']
+
+        for k,v in regexes.items():
+            value = get_num(desc, k)
+            pdm.loc[index,k] = value
+            #row[k] = value
+            #print(get_num(desc,k))
+
+        urls =  row['urls']    
+        for k in url_keys:
+            value =  urls.get(k) 
+            if len(value) > 0:
+                pdm.loc[index,k] = ','.join(value)
+               # pdm.loc[index, k] = value
     
-#res1= re.search(r'has a current supply of ([\d|,|.]+)',desc)
-#res2= re.search(r'is\s*([\d|,|.]+)\s*USD',desc)
-#res3= re.search(r'([\d|,|.]+)\s*over the',desc)
-#res4= re.search(r'([\d|,|.|+]+)\s*over the',desc)
-#res4= re.search(r'([\d|,|.]+)\s*traded',desc)
+
+    pdm.to_csv('data\\merge_info2.csv',index=False)
+
+#desc = 'Mirrored Invesco QQQ Trust (mQQQ) is a cryptocurrency and operates on the Ethereum platform. Mirrored Invesco QQQ Trust has a current supply of 13,986.610708. The last known price of Mirrored Invesco QQQ Trust is 380.57680721 USD and is down -2.73 over the last 24 hours. It is currently trading on 2 active market(s) with $163,101.15 traded over the last 24 hours. More information can be found at https://mirror.finance. '
+
+
+output()
+
+    
 pass
