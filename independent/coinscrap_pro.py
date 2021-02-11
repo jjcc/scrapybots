@@ -6,6 +6,9 @@ from requests.exceptions import ConnectionError, Timeout, TooManyRedirects
 import json
 from dotenv import load_dotenv
 import os
+import datetime
+import sqlite3
+
 load_dotenv()
 
 headers = {
@@ -15,7 +18,7 @@ headers = {
 base_url = 'https://pro-api.coinmarketcap.com/v1/'
 base_parameters = {
   'start':'1',
-  'limit':'499',
+  'limit':'1000',
 }
 
 api_list = {
@@ -52,7 +55,7 @@ def call_api(apiname, injected = None, use_base_param=True):
     if injected != None:
         for k,v in injected.items():
             parameters[k] =  v
-
+    data = None
     try:
       fname = apiname + '_info.json'
       response = session.get(url, params=parameters)
@@ -62,9 +65,9 @@ def call_api(apiname, injected = None, use_base_param=True):
         json.dump(data, data_file, indent=2)
     except (ConnectionError, Timeout, TooManyRedirects) as e:
       print(e)
+    return data
 
-if __name__ == "__main__":
-    #call_api('map')
+def get_metainfo():
     with open('data\\map_info.json','r') as file:
        crypto_map = json.load(file)
     data =  crypto_map['data']
@@ -72,3 +75,59 @@ if __name__ == "__main__":
     ids_str = ','.join([str(i) for i in ids])
     params = {'id':ids_str}
     call_api('info',injected = params, use_base_param=False)
+
+
+def load_main_table(connection=None):
+    '''
+    load data into a table with only static information
+    '''
+
+    today = datetime.datetime.today()
+    if connection is None:
+        conn = sqlite3.connect('data\\crypto.db')
+    else:
+        conn = connection
+
+    c = conn.cursor()
+    ##c.execute("SELECT max(date(date)) as latest FROM class1_index;")
+    ##latest_str = c.fetchone()[0]
+
+
+    with open("data\\bak1\\map_info.json","r") as fin:
+        dj = json.load(fin)
+    data = dj['data']
+    keys = ['id','name','symbol','slug','first_historical_data']
+    for d in data:
+        key = []
+        val = []
+        c.execute(
+            "INSERT INTO basic([id],[name], [symbol],[slug],[first_historical_data]) values(?,?,?,?,?)",
+            (d['id'], d['name'], d['symbol'], d['slug'], d['first_historical_data']))
+
+#        for k in keys:
+#            key.append(k)
+#            val.append(v)
+#        for i in range(4):
+#            print(val[i]) 
+    conn.commit()
+    c.close()
+
+def test_db(connection = None):
+    if connection is None:
+        conn = sqlite3.connect('data\\crypto.db')
+    else:
+        conn = connection
+
+    c = conn.cursor()
+    ##c.execute("SELECT max(date(date)) as latest FROM class1_index;")
+    ##latest_str = c.fetchone()[0]
+    c.execute("SELECT * FROM basic")
+    for i in range(10):
+        row = c.fetchone()
+        print(f'id:{row[0]},name:{row[1]}')
+
+if __name__ == "__main__":
+    #call_api('map') # cost only 1 credit
+    #get_metainfo()
+    #load_main_table()
+    test_db()
