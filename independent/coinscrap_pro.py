@@ -57,7 +57,8 @@ def call_api(apiname, injected = None, use_base_param=True):
             parameters[k] =  v
     data = None
     try:
-      fname = apiname + '_info.json'
+      strdate = str(datetime.datetime.today())[:10]
+      fname = apiname + f'_{strdate}_info.json'
       response = session.get(url, params=parameters)
       data = json.loads(response.text)
       #print(data)
@@ -67,14 +68,24 @@ def call_api(apiname, injected = None, use_base_param=True):
       print(e)
     return data
 
-def get_metainfo():
-    with open('data\\map_info.json','r') as file:
-       crypto_map = json.load(file)
+def get_map():
+    '''
+    call 'map' api to get map inf
+    '''
+    #with open('data\\map_info.json','r') as file:
+    #   crypto_map = json.load(file)
+    crypto_map = call_api('map',injected={"limit":200})
     data =  crypto_map['data']
+    return data
+
+def get_metainfo(data):
+    '''
+    call 'info' api to get meta info
+    '''
     ids= [x['id'] for x in data]
     ids_str = ','.join([str(i) for i in ids])
     params = {'id':ids_str}
-    call_api('info',injected = params, use_base_param=False)
+    return call_api('info',injected = params, use_base_param=False)
 
 
 def load_main_table(connection=None):
@@ -127,7 +138,7 @@ def test_db(connection = None):
         print(f'id:{row[0]},name:{row[1]}')
 
 if __name__ == "__main__":
-    #call_api('map') # cost only 1 credit
-    #get_metainfo()
     #load_main_table()
-    test_db()
+    #test_db()
+    #call_api('map') # cost only 1 credit
+    get_metainfo(get_map())
