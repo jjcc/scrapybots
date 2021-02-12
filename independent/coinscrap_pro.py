@@ -68,9 +68,10 @@ def call_api(apiname, injected = None, use_base_param=True):
       print(e)
     return data
 
-def get_map():
+def get_map_dict():
     '''
     call 'map' api to get map inf
+    return dictionary
     '''
     #with open('data\\map_info.json','r') as file:
     #   crypto_map = json.load(file)
@@ -78,15 +79,16 @@ def get_map():
     data =  crypto_map['data']
     return data
 
-def get_metainfo(data):
+def get_metainfo_dict(data):
     '''
     call 'info' api to get meta info
+    return dictionary
     '''
     ids= [x['id'] for x in data]
     ids_str = ','.join([str(i) for i in ids])
     params = {'id':ids_str}
-    return call_api('info',injected = params, use_base_param=False)
-
+    crypto_info = call_api('info',injected = params, use_base_param=False)
+    return crypto_info['data']
 
 def load_main_table(connection=None):
     '''
@@ -141,4 +143,4 @@ if __name__ == "__main__":
     #load_main_table()
     #test_db()
     #call_api('map') # cost only 1 credit
-    get_metainfo(get_map())
+    get_metainfo_dict(get_map_dict())
