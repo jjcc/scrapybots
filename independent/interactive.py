@@ -104,7 +104,9 @@ CREATE TABLE basic (
 '''
 
 unwanted = ['rank', 'description', 'notice', 'tags', 'tag-groups', 'urls', 'platform', 
-            'date_added', 'is_hidden', 'supply', 'price', 'change', 'volumn', 'market', 'twitter']
+            'date_added', 'is_hidden', 'supply', 'price', 'change', 'volumn', 'market', 'twitter','logo']
+            #'logo' can be deducted. put into unwanted list to reduce the size of table
+
 
 def load_basic_to_db(df, connection = None):
     '''
@@ -129,12 +131,36 @@ def load_basic_to_db(df, connection = None):
     #conn.commit()
     #c.close()
 
+def compare_id(df_new, conn):
+    dff = pd.read_sql('select id from basic', conn)
+    old_ids = dff['id'].to_list()
+    new_ids = df_new['id'].to_list()
+    diff = [ id for id in new_ids if not id in old_ids ]
+    return diff # the id list not in old list
+
+table_fields = ['id','symbol','name','category','slug','subreddit','tag-names','twitter_username','website','message_board','chat','explorer','reddit','technical_doc','source_code','announcement']
+def insert_new(df,id_list, conn):
+    '''
+    Insert new id in case there are other coins get into the 2000 list
+    '''
+    del table_fields[0] # remove 'id' because it's index of data frame
+    df_new= df.loc[id_list,table_fields]
+    c = conn.cursor()
+    df_new.to_sql('basic', conn,if_exists='append')
+#    for d in data:
+#    c.execute(
+#        "INSERT INTO basic([id],[name], [symbol],[slug],[first_historical_data]) values(?,?,?,?,?)",
+#        (d['id'], d['name'], d['symbol'], d['slug'], d['first_historical_data']))
 
 
 if __name__ == '__main__':
-    df = pd.read_csv('data\\merge_info5.csv')
-    df_reduced = load_basic_to_db(df)
-    print(df.head())
+    df = pd.read_csv('data\merge_info5.csv',index_col='id')
+    #df_reduced = load_basic_to_db(df)
+    #print(df.head())
+    ids = [5115,2400]
+    conn = sqlite3.connect('data\\crypto.db')
+    insert_new(df,ids,conn)
+    
     #output()
 
     
