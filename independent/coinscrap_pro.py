@@ -75,7 +75,7 @@ def get_map_dict():
     '''
     #with open('data\\map_info.json','r') as file:
     #   crypto_map = json.load(file)
-    crypto_map = call_api('map',injected={"limit":200})
+    crypto_map = call_api('map',injected={"limit":1000})
     data =  crypto_map['data']
     return data
 

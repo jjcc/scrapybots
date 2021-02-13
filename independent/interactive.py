@@ -2,6 +2,8 @@
 import pandas as pd
 import json
 import re
+import datetime
+import sqlite3
 from coinscrap_pro import get_map_dict,  get_metainfo_dict, call_api
 
 def get_metainfo(data):
@@ -68,16 +70,71 @@ def output( online = False):
         for k in url_keys:
             value =  urls.get(k) 
             if len(value) > 0:
-                pdm.loc[index,k] = ','.join(value)
+                val2 = [ r.replace('\r\n',' ') for r in value]
+                pdm.loc[index,k] = ','.join(val2)
                # pdm.loc[index, k] = value
     
 
-    pdm.to_csv('data\\merge_info3.csv',index=False)
+    pdm.to_csv('data\\merge_info5.csv',index=False)
 
 #desc = 'Mirrored Invesco QQQ Trust (mQQQ) is a cryptocurrency and operates on the Ethereum platform. Mirrored Invesco QQQ Trust has a current supply of 13,986.610708. The last known price of Mirrored Invesco QQQ Trust is 380.57680721 USD and is down -2.73 over the last 24 hours. It is currently trading on 2 active market(s) with $163,101.15 traded over the last 24 hours. More information can be found at https://mirror.finance. '
 
+table_fields = ['id','symbol','name','category','slug','logo','subreddit','tag-names','twitter_username','website','message_board','chat','explorer','reddit','technical_doc','source_code','announcement']
 
-output()
+SQL_CREATE_TABLE = '''
+CREATE TABLE basic (
+	id INTEGER PRIMARY KEY,
+	symbol 			TEXT NOT NULL,
+	name 			TEXT NOT NULL,
+	category 		TEXT,
+	slug			TEXT,
+	logo			TEXT,
+	subreddit		TEXT,
+	tag_names		TEXT, 
+	twitter_username TEXT,
+	website 		TEXT,
+	message_board	TEXT,
+	chat			TEXT,
+	explorer		TEXT,
+	reddit			TEXT,
+	technical_doc	TEXT,
+	source_code		TEXT,
+	announcement	TEXT
+)
+'''
+
+unwanted = ['rank', 'description', 'notice', 'tags', 'tag-groups', 'urls', 'platform', 
+            'date_added', 'is_hidden', 'supply', 'price', 'change', 'volumn', 'market', 'twitter']
+
+def load_basic_to_db(df, connection = None):
+    '''
+    load data into a table with only static information
+    '''
+    today = datetime.datetime.today()
+    if connection is None:
+        conn = sqlite3.connect('data\\crypto.db')
+    else:
+        conn = connection
+
+    c = conn.cursor()
+    ##c.execute("SELECT max(date(date)) as latest FROM class1_index;")
+    ##latest_str = c.fetchone()[0]
+    for k in unwanted:
+        del df[k]
+
+    df.to_sql('basic1', conn,index=False)
+    return df
+
+  
+    #conn.commit()
+    #c.close()
+
+
+
+if __name__ == '__main__':
+    df = pd.read_csv('data\\merge_info5.csv')
+    df_reduced = load_basic_to_db(df)
+    print(df.head())
+    #output()
 
     
-pass
