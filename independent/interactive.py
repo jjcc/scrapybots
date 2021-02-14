@@ -75,7 +75,7 @@ def output( online = False):
                # pdm.loc[index, k] = value
     
 
-    pdm.to_csv('data\\merge_info5.csv',index=False)
+    pdm.to_csv('data\\merge_info6.csv',index=False)
 
 #desc = 'Mirrored Invesco QQQ Trust (mQQQ) is a cryptocurrency and operates on the Ethereum platform. Mirrored Invesco QQQ Trust has a current supply of 13,986.610708. The last known price of Mirrored Invesco QQQ Trust is 380.57680721 USD and is down -2.73 over the last 24 hours. It is currently trading on 2 active market(s) with $163,101.15 traded over the last 24 hours. More information can be found at https://mirror.finance. '
 
@@ -119,12 +119,10 @@ def load_basic_to_db(df, connection = None):
         conn = connection
 
     c = conn.cursor()
-    ##c.execute("SELECT max(date(date)) as latest FROM class1_index;")
-    ##latest_str = c.fetchone()[0]
     for k in unwanted:
         del df[k]
 
-    df.to_sql('basic1', conn,index=False)
+    df.to_sql('basic1', conn,index=True)
     return df
 
   
@@ -139,28 +137,30 @@ def compare_id(df_new, conn):
     return diff # the id list not in old list
 
 table_fields = ['id','symbol','name','category','slug','subreddit','tag-names','twitter_username','website','message_board','chat','explorer','reddit','technical_doc','source_code','announcement']
-def insert_new(df,id_list, conn):
+def insert_new(df,id_list, conn, append=False):
     '''
     Insert new id in case there are other coins get into the 2000 list
     '''
-    del table_fields[0] # remove 'id' because it's index of data frame
+    if append:
+        del table_fields[0] # remove 'id' because it's index of data frame
     df_new= df.loc[id_list,table_fields]
     c = conn.cursor()
     df_new.to_sql('basic', conn,if_exists='append')
-#    for d in data:
-#    c.execute(
-#        "INSERT INTO basic([id],[name], [symbol],[slug],[first_historical_data]) values(?,?,?,?,?)",
-#        (d['id'], d['name'], d['symbol'], d['slug'], d['first_historical_data']))
 
-
-if __name__ == '__main__':
+def test_insert_new():
     df = pd.read_csv('data\merge_info5.csv',index_col='id')
-    #df_reduced = load_basic_to_db(df)
-    #print(df.head())
     ids = [5115,2400]
     conn = sqlite3.connect('data\\crypto.db')
-    insert_new(df,ids,conn)
+    insert_new(df,ids,conn,append=True)
+
+if __name__ == '__main__':
+    #collect data from online
+    #output(online=True)
+    #load data into db
+    df = pd.read_csv('data\merge_info6.csv',index_col='id')
+    df_reduced = load_basic_to_db(df)
+    print(df.head())
     
-    #output()
+    pass
 
     
