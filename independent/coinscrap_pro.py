@@ -37,7 +37,7 @@ headers['X-CMC_PRO_API_KEY'] = os.getenv('API_KEY')
 session = Session()
 session.headers.update(headers)
 
-def call_api(apiname, injected = None, use_base_param=True):
+def call_api(apiname, injected = None, use_base_param=True,pack=None):
     if apiname not in api_list.keys():
         print("wrong api name")    
         return
@@ -58,7 +58,10 @@ def call_api(apiname, injected = None, use_base_param=True):
     data = None
     try:
       strdate = str(datetime.datetime.today())[:10]
-      fname = apiname + f'_{strdate}_info.json'
+      if pack == None:
+          fname = apiname + f'_{strdate}_info.json'
+      else:
+          fname = apiname + f'_{strdate}_info{pack}.json'
       response = session.get(url, params=parameters)
       data = json.loads(response.text)
       #print(data)
@@ -75,20 +78,40 @@ def get_map_dict():
     '''
     #with open('data\\map_info.json','r') as file:
     #   crypto_map = json.load(file)
-    crypto_map = call_api('map',injected={"limit":1000})
+    crypto_map = call_api('map',injected={"limit":5000})
     data =  crypto_map['data']
     return data
 
+pack_size = 1000
 def get_metainfo_dict(data):
     '''
     call 'info' api to get meta info
     return dictionary
     '''
     ids= [x['id'] for x in data]
-    ids_str = ','.join([str(i) for i in ids])
-    params = {'id':ids_str}
-    crypto_info = call_api('info',injected = params, use_base_param=False)
-    return crypto_info['data']
+    if len(ids) <= pack_size:
+        ids_str = ','.join([str(i) for i in ids])
+        params = {'id':ids_str}
+        crypto_info = call_api('info',injected = params, use_base_param=False)
+        return crypto_info['data']
+    else:
+        result = None
+        pack_count = int((len(ids) - 1)/ pack_size) + 1
+        for i in range(pack_count):
+            print(f'pack:{i}')
+            start = i * pack_size
+            end = start + pack_size
+            ids_sub = ids[start:end]
+            ids_str = ','.join([str(i) for i in ids_sub])
+            params = {'id':ids_str}
+            crypto_info = call_api('info',injected = params, use_base_param=False,pack=i)
+            if result ==  None:
+                result = crypto_info['data']
+            else:
+                result.update(crypto_info['data'])
+        return result
+
+
 
 def load_main_table(connection=None):
     '''
@@ -117,11 +140,7 @@ def load_main_table(connection=None):
             "INSERT INTO basic([id],[name], [symbol],[slug],[first_historical_data]) values(?,?,?,?,?)",
             (d['id'], d['name'], d['symbol'], d['slug'], d['first_historical_data']))
 
-#        for k in keys:
-#            key.append(k)
-#            val.append(v)
-#        for i in range(4):
-#            print(val[i]) 
+
     conn.commit()
     c.close()
 
@@ -139,8 +158,12 @@ def test_db(connection = None):
         row = c.fetchone()
         print(f'id:{row[0]},name:{row[1]}')
 
+
+
+
 if __name__ == "__main__":
     #load_main_table()
     #test_db()
     #call_api('map') # cost only 1 credit
     get_metainfo_dict(get_map_dict())
+    #get_map_dict()
