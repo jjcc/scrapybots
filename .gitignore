@@ -3,3 +3,12 @@
 *.pkl
 *.cvs
 */tmp/*
+venv*
+.idea
+.vscode
+.env
+.venv38
+*/output/*
+*.json
+*.csv
+*.db
