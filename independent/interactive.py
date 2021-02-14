@@ -147,6 +147,77 @@ def insert_new(df,id_list, conn, append=False):
     c = conn.cursor()
     df_new.to_sql('basic', conn,if_exists='append')
 
+def compare_rank(old,new):
+    fname_o =  f'data\\map_{old}_info.json'
+    fname_n =  f'data\\map_{new}_info.json'
+    with open(fname_o,'r') as fo:
+        djo = json.load(fo)
+    with open(fname_n,'r') as fn:
+        djn = json.load(fn)
+    lo = djo['data'] # list of old
+    ln = djn['data'] # list of new
+
+#def compare_rank_df(lo,ln)
+    no_cmp = min(len(lo),len(ln))
+
+    do = {} # key is symble
+    dn = {} # key is symble
+    for i,v in enumerate(lo):
+        if i >= no_cmp:
+            break
+        #print(f'{i["rank"]},{i["symbol"]}')
+        do[v['symbol']] = v
+    for i,v in enumerate(ln):
+        if i >= no_cmp:
+            break
+        #print(f'{i["rank"]},{i["symbol"]}')
+        dn[v['symbol']] = v
+    # Now go over all the symboe in old
+    ko = do.keys()
+    kn = dn.keys()
+    so =  set(ko)
+    sn =  set(kn)
+    smissing = so - sn
+    sadding = sn - so
+    print(smissing)
+    print(sadding)
+    fout = open(f"data\\{old}_{new}",'w')
+    for s in sadding:
+        vn = dn[s]['rank']
+        #print(f'{s},{vn}')
+        fout.write(f'{s},{vn}')
+    #print("##,##")
+    fout.write("##,##")
+    dchanged = {}
+    dup = {}
+    ddown = {}
+    for k,v in do.items():
+        if k in smissing:
+            continue
+        ranko = v['rank']
+        rankn = dn[k]['rank']
+        if rankn == ranko:
+            continue
+        dchanged[k] = {'old':ranko, 'new':rankn}
+        if (rankn<ranko):
+            dup[k] = {'old':ranko, 'new':rankn}
+        else:
+            ddown[k] = {'old':ranko, 'new':rankn}
+        
+    #for k, v in dchanged.items():
+    #    print(f'{k},{v}')
+    print("^^^^")
+    for k, v in dup.items():
+        print(f'{k},{v}')
+
+    print("vvvv")
+    for k, v in ddown.items():
+        print(f'{k},{v}')
+
+
+
+
+
 def test_insert_new():
     df = pd.read_csv('data\merge_info5.csv',index_col='id')
     ids = [5115,2400]
@@ -156,10 +227,12 @@ def test_insert_new():
 if __name__ == '__main__':
     #collect data from online
     #output(online=True)
+
     #load data into db
-    df = pd.read_csv('data\merge_info6.csv',index_col='id')
-    df_reduced = load_basic_to_db(df)
-    print(df.head())
+    #df = pd.read_csv('data\merge_info6.csv',index_col='id')
+    #df_reduced = load_basic_to_db(df)
+    #print(df.head())
+    compare_rank('2021-02-11','2021-02-12')
     
     pass
 
