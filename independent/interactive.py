@@ -227,7 +227,7 @@ def compare_rank(old,new, limit=1000):
 def pull_n_compare(old):
     '''
     compare previous with latest '''
-    map_dict = get_map_dict()
+    map_dict = get_map_dict()   #This will create a file for comparison input
     strdate = str(datetime.datetime.today())[:10]
     compare_rank(old,strdate,limit=200)
 
@@ -237,6 +237,11 @@ def test_insert_new():
     conn = sqlite3.connect('data/crypto.db')
     insert_new(df,ids,conn,append=True)
 
+def compare_to_yesterday():
+    yesterday =  datetime.datetime.now() - datetime.timedelta(1)
+    stryest = str(yesterday)[:10]
+    pull_n_compare(stryest)
+
 if __name__ == '__main__':
     #collect data from online
     #output(online=True)
@@ -245,10 +250,8 @@ if __name__ == '__main__':
     #df = pd.read_csv('data\merge_info6.csv',index_col='id')
     #df_reduced = load_basic_to_db(df)
     #print(df.head())
-    yesterday =  datetime.datetime.now() - datetime.timedelta(1)
-    stryest = str(yesterday)[:10]
-    #compare_rank('2021-02-13','2021-02-15',limit=200)
-    pull_n_compare(stryest)
+    compare_rank('2021-02-11','2021-02-16',limit=200)
+    #compare_to_yesterday()
     pass
 
     
