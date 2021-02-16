@@ -39,10 +39,10 @@ def output( online = False):
         map_dict = get_map_dict()
         info_dict = get_metainfo_dict(map_dict) #call online 
     else:
-        with open('data\\info_info.json','r') as fin:
+        with open('data/info_info.json','r') as fin:
             data_j = json.load(fin)
         info_dict = data_j['data']
-        with open('data\\map_info.json','r') as fin:
+        with open('data/map_info.json','r') as fin:
             data_j = json.load(fin)
         map_dict = data_j['data']
     # convert dict into df
@@ -76,7 +76,7 @@ def output( online = False):
     
 
     strdate = str(datetime.datetime.today())[:10]
-    pdm.to_csv(f'data\\merge_info{strdate}.csv',index=False)
+    pdm.to_csv(f'data/merge_info{strdate}.csv',index=False)
 
 #desc = 'Mirrored Invesco QQQ Trust (mQQQ) is a cryptocurrency and operates on the Ethereum platform. Mirrored Invesco QQQ Trust has a current supply of 13,986.610708. The last known price of Mirrored Invesco QQQ Trust is 380.57680721 USD and is down -2.73 over the last 24 hours. It is currently trading on 2 active market(s) with $163,101.15 traded over the last 24 hours. More information can be found at https://mirror.finance. '
 
@@ -115,7 +115,7 @@ def load_basic_to_db(df, connection = None):
     '''
     today = datetime.datetime.today()
     if connection is None:
-        conn = sqlite3.connect('data\\crypto.db')
+        conn = sqlite3.connect('data/crypto.db')
     else:
         conn = connection
 
@@ -227,9 +227,9 @@ def compare_rank(old,new, limit=1000):
 
 
 def test_insert_new():
-    df = pd.read_csv('data\merge_info5.csv',index_col='id')
+    df = pd.read_csv('data/merge_info5.csv',index_col='id')
     ids = [5115,2400]
-    conn = sqlite3.connect('data\\crypto.db')
+    conn = sqlite3.connect('data/crypto.db')
     insert_new(df,ids,conn,append=True)
 
 if __name__ == '__main__':
