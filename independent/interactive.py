@@ -224,7 +224,12 @@ def compare_rank(old,new, limit=1000):
     fout.close()
 
 
-
+def pull_n_compare(old):
+    '''
+    compare previous with latest '''
+    map_dict = get_map_dict()
+    strdate = str(datetime.datetime.today())[:10]
+    compare_rank(old,strdate,limit=200)
 
 def test_insert_new():
     df = pd.read_csv('data/merge_info5.csv',index_col='id')
@@ -240,10 +245,10 @@ if __name__ == '__main__':
     #df = pd.read_csv('data\merge_info6.csv',index_col='id')
     #df_reduced = load_basic_to_db(df)
     #print(df.head())
-    
-    
-    compare_rank('2021-02-13','2021-02-15',limit=200)
-    
+    yesterday =  datetime.datetime.now() - datetime.timedelta(1)
+    stryest = str(yesterday)[:10]
+    #compare_rank('2021-02-13','2021-02-15',limit=200)
+    pull_n_compare(stryest)
     pass
 
     
