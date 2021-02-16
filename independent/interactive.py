@@ -244,7 +244,7 @@ def compare_to_yesterday():
 
 if __name__ == '__main__':
     #collect data from online
-    #output(online=True)
+    output(online=True)
 
     #load data into db
     #df = pd.read_csv('data\merge_info6.csv',index_col='id')
@@ -252,6 +252,8 @@ if __name__ == '__main__':
     #print(df.head())
     compare_rank('2021-02-11','2021-02-16',limit=200)
     #compare_to_yesterday()
+    
+    
     pass
 
     
