@@ -181,13 +181,13 @@ def compare_rank(old,new):
     sadding = sn - so
     print(smissing)
     print(sadding)
-    fout = open(f"data\\{old}_{new}",'w')
+    fout = open(f"data\\{old}_{new}.csv",'w')
     for s in sadding:
         vn = dn[s]['rank']
         #print(f'{s},{vn}')
-        fout.write(f'{s},{vn}')
+        fout.write(f'{s},{vn}\n')
     #print("##,##")
-    fout.write("##,##")
+    fout.write("##,##\n")
     dchanged = {}
     dup = {}
     ddown = {}
@@ -206,14 +206,14 @@ def compare_rank(old,new):
         
     #for k, v in dchanged.items():
     #    print(f'{k},{v}')
-    print("^^^^")
+    fout.write("^^,^^\n")
     for k, v in dup.items():
-        print(f'{k},{v}')
+        fout.write(f'{k},{v}\n')
 
-    print("vvvv")
+    fout.write("vv,vv\n")
     for k, v in ddown.items():
-        print(f'{k},{v}')
-
+        fout.write(f'{k},{v}\n')
+    fout.close()
 
 
 
@@ -232,7 +232,7 @@ if __name__ == '__main__':
     #df = pd.read_csv('data\merge_info6.csv',index_col='id')
     #df_reduced = load_basic_to_db(df)
     #print(df.head())
-    compare_rank('2021-02-11','2021-02-12')
+    compare_rank('2021-02-12','2021-02-13')
     
     pass
 
