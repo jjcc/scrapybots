@@ -149,16 +149,17 @@ def insert_new(df,id_list, conn, append=False):
     df_new.to_sql('basic', conn,if_exists='append')
 
 def compare_rank(old,new, limit=1000):
-    fname_o =  f'data\\map_{old}_info.json'
-    fname_n =  f'data\\map_{new}_info.json'
+    fname_o =  f'data/map_{old}_info.json'
+    fname_n =  f'data/map_{new}_info.json'
     with open(fname_o,'r') as fo:
         djo = json.load(fo)
     with open(fname_n,'r') as fn:
         djn = json.load(fn)
     lo = djo['data'] # list of old
     ln = djn['data'] # list of new
+#    return (lo,ln, limit)
 
-#def compare_rank_df(lo,ln)
+#def compare_rank_df(lo,ln,limit= 1000):
     no_cmp = min(len(lo),len(ln))
 
     do = {} # key is symble
@@ -186,7 +187,7 @@ def compare_rank(old,new, limit=1000):
     sadding = sn - so
     print(smissing)
     print(sadding)
-    fout = open(f"data\\{old}_{new}.csv",'w')
+    fout = open(f"data/{old}_{new}.csv",'w')
     for s in sadding:
         vn = dn[s]['rank']
         #print(f'{s},{vn}')
@@ -205,9 +206,11 @@ def compare_rank(old,new, limit=1000):
             continue
         dchanged[k] = {'old':ranko, 'new':rankn}
         if (rankn<ranko):
-            dup[k] = {'old':ranko, 'new':rankn}
+            diff = ranko -  rankn
+            dup[k] = {'old':ranko, 'new':rankn,'diff':diff}
         else:
-            ddown[k] = {'old':ranko, 'new':rankn}
+            diff = rankn - ranko
+            ddown[k] = {'old':ranko, 'new':rankn,'diff':diff}
         
     #for k, v in dchanged.items():
     #    print(f'{k},{v}')
