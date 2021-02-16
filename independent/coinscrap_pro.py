@@ -65,7 +65,7 @@ def call_api(apiname, injected = None, use_base_param=True,pack=None):
       response = session.get(url, params=parameters)
       data = json.loads(response.text)
       #print(data)
-      with open(f"data\\{fname}", "w") as data_file:
+      with open(f"data/{fname}", "w") as data_file:
         json.dump(data, data_file, indent=2)
     except (ConnectionError, Timeout, TooManyRedirects) as e:
       print(e)
@@ -120,7 +120,7 @@ def load_main_table(connection=None):
 
     today = datetime.datetime.today()
     if connection is None:
-        conn = sqlite3.connect('data\\crypto.db')
+        conn = sqlite3.connect('data/crypto.db')
     else:
         conn = connection
 
@@ -129,7 +129,7 @@ def load_main_table(connection=None):
     ##latest_str = c.fetchone()[0]
 
 
-    with open("data\\bak1\\map_info.json","r") as fin:
+    with open("data/bak1/map_info.json","r") as fin:
         dj = json.load(fin)
     data = dj['data']
     keys = ['id','name','symbol','slug','first_historical_data']
@@ -146,7 +146,7 @@ def load_main_table(connection=None):
 
 def test_db(connection = None):
     if connection is None:
-        conn = sqlite3.connect('data\\crypto.db')
+        conn = sqlite3.connect('data/crypto.db')
     else:
         conn = connection
 
