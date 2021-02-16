@@ -75,7 +75,8 @@ def output( online = False):
                # pdm.loc[index, k] = value
     
 
-    pdm.to_csv('data\\merge_info6.csv',index=False)
+    strdate = str(datetime.datetime.today())[:10]
+    pdm.to_csv(f'data\\merge_info{strdate}.csv',index=False)
 
 #desc = 'Mirrored Invesco QQQ Trust (mQQQ) is a cryptocurrency and operates on the Ethereum platform. Mirrored Invesco QQQ Trust has a current supply of 13,986.610708. The last known price of Mirrored Invesco QQQ Trust is 380.57680721 USD and is down -2.73 over the last 24 hours. It is currently trading on 2 active market(s) with $163,101.15 traded over the last 24 hours. More information can be found at https://mirror.finance. '
 
@@ -147,7 +148,7 @@ def insert_new(df,id_list, conn, append=False):
     c = conn.cursor()
     df_new.to_sql('basic', conn,if_exists='append')
 
-def compare_rank(old,new):
+def compare_rank(old,new, limit=1000):
     fname_o =  f'data\\map_{old}_info.json'
     fname_n =  f'data\\map_{new}_info.json'
     with open(fname_o,'r') as fo:
@@ -165,10 +166,14 @@ def compare_rank(old,new):
     for i,v in enumerate(lo):
         if i >= no_cmp:
             break
+        if i >= limit:
+            break
         #print(f'{i["rank"]},{i["symbol"]}')
         do[v['symbol']] = v
     for i,v in enumerate(ln):
         if i >= no_cmp:
+            break
+        if i >= limit:
             break
         #print(f'{i["rank"]},{i["symbol"]}')
         dn[v['symbol']] = v
@@ -232,7 +237,9 @@ if __name__ == '__main__':
     #df = pd.read_csv('data\merge_info6.csv',index_col='id')
     #df_reduced = load_basic_to_db(df)
     #print(df.head())
-    compare_rank('2021-02-12','2021-02-13')
+    
+    
+    compare_rank('2021-02-13','2021-02-15',limit=200)
     
     pass
 
